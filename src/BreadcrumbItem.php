@@ -10,7 +10,7 @@ class BreadcrumbItem
     public function __construct($url, $name)
     {
         $this->url = $url;
-        $this->anchor = $name;
+        $this->name = $name;
     }
 
     public function getUrl()

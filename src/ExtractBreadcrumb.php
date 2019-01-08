@@ -10,11 +10,10 @@ use phpUri;
  */
 class ExtractBreadcrumb
 {
-    private $source;
-    private $breadcrumbSource;
-    private $breadcrumb = [];
-    private $baseUrl;
-    private $currentUrl;
+    protected $source;
+    protected $breadcrumb = [];
+    protected $baseUrl;
+    protected $currentUrl;
 
     const BC_RGX = '#<(div|p|nav|ul)[^>]*(id|class)="?(breadcrumbs?|fil_?d?arian?ne)"?[^>]*>(.*)<\/(\1)>#siU';
 
@@ -44,7 +43,7 @@ class ExtractBreadcrumb
         return $self->extractBreadcrumb();
     }
 
-    private function __construct()
+    protected function __construct()
     {
     }
 
@@ -66,24 +65,24 @@ class ExtractBreadcrumb
         }
     }
 
-    private function findBreadcrumb()
+    protected function findBreadcrumb()
     {
         if (preg_match(self::BC_RGX, $this->source, $match)) {
             return $match[4];
         }
     }
 
-    private function divideBreadcrumb($breadcrumb, $divider)
+    protected function divideBreadcrumb($breadcrumb, $divider)
     {
         $exploded = preg_split('/'.str_replace('/', '\/', $divider).'/si', $breadcrumb);
 
-        return count($exploded) > 1 ? $exploded : false;
+        return false !== $exploded && count($exploded) > 1 ? $exploded : false;
     }
 
     /**
      * On essaye d'extraire l'url et l'ancre.
      */
-    private function extractBreadcrumbData($array)
+    protected function extractBreadcrumbData($array)
     {
         foreach ($array as $a) {
             $link = $this->extractHref($a);
@@ -97,12 +96,12 @@ class ExtractBreadcrumb
         }
     }
 
-    private function extractAnchor($str)
+    protected function extractAnchor($str)
     {
         return trim(strtolower(Helper::htmlToPlainText($str)), '> ');
     }
 
-    private function extractHref($str)
+    protected function extractHref($str)
     {
         $regex = [
             'href="([^"]*)"',

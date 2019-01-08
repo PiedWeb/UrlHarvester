@@ -41,7 +41,7 @@ class Request
     private $donwloadOnly;
 
     /**
-     * @var Request
+     * @var CurlRequest
      */
     private $request;
 
@@ -141,8 +141,7 @@ class Request
         $this->response = $this->request->exec();
 
         // Recrawl https version if it's asked
-        if (true === $this->tryHttps) {
-            $httpsUrl = $this->amIRedirectToHttps();
+        if (true === $this->tryHttps && false !== ($httpsUrl = $this->amIRedirectToHttps())) {
             $requestForHttps = self::make($httpsUrl, $this->userAgent, $this->donwloadOnly, $this->language);
             if (!$requestForHttps->get()->hasError()) { // if no error, $this becode https request
                 return $requestForHttps;
@@ -161,7 +160,7 @@ class Request
     }
 
     /**
-     * @return Response
+     * @return Response|int corresponding to the curl error
      */
     public function getResponse()
     {
@@ -173,8 +172,9 @@ class Request
      */
     private function amIRedirectToHttps()
     {
-        $headers = array_change_key_case($this->response->getHeaders());
-        $redirUrl = isset($headers['location']) ? $this->headers['location'] : null;
+        $headers = $this->response->getHeaders();
+        $headers = array_change_key_case(null !== $headers ? $headers : []);
+        $redirUrl = isset($headers['location']) ? $headers['location'] : null;
         if (null !== $redirUrl && ($httpsUrl = preg_replace('#^http://#', 'https://', $this->url, 1)) == $redirUrl) {
             return $httpsUrl;
         }

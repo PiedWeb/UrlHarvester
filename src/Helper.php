@@ -3,10 +3,11 @@
 namespace PiedWeb\UrlHarvester;
 
 use ForceUTF8\Encoding;
+use simple_html_dom;
 
 class Helper
 {
-    public function clean(string $source)
+    public static function clean(string $source)
     {
         return trim(preg_replace('/\s{2,}/', ' ', Encoding::toUTF8($source)));
     }
@@ -45,7 +46,8 @@ class Helper
         foreach ($html->find('img') as $img) {
             $alt = isset($img->alt) ? $img->alt : '-';
             $alt = substr($alt, 0, 300).(strlen($alt) > 300 ? '~' : '');
-            $txt = str_replace($img->outertext, '!['.$alt.']('.$src.')', $txt);
+            $src = isset($img->src) ? '('.$img->src.')' : null;
+            $txt = str_replace($img->outertext, '!['.$alt.']'.$src, $txt);
         }
 
         return $txt;

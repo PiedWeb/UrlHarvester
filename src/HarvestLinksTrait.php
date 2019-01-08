@@ -58,7 +58,6 @@ trait HarvestLinksTrait
     public function classifyLinks()
     {
         $links = $this->getLinks();
-        $internals = [];
 
         foreach ($links as $link) {
             $urlParsed = parse_url($link->getUrl());

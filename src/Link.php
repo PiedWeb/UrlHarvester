@@ -8,11 +8,11 @@ class Link
     private $anchor;
     private $element;
 
-    public function __construct(string $url, $dom)
+    public function __construct(string $url, $element)
     {
         $this->url = $url;
-        $this->anchor = substr(Helper::clean($dom->innertext), 0, 100);
-        $this->dom = $dom;
+        $this->anchor = substr(Helper::clean($element->innertext), 0, 100);
+        $this->element = $element;
     }
 
     public function getUrl()
@@ -27,6 +27,6 @@ class Link
 
     public function getElement()
     {
-        $this->dom;
+        $this->element;
     }
 }

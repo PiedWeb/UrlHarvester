@@ -21,6 +21,12 @@ class Harvest
      */
     protected $dom;
 
+    /** @var string */
+    protected $baseUrl;
+
+    /** @var string */
+    protected $domain;
+
     public static function fromUrl(
         string $url,
         string $userAgent = 'Bot: Url Harvester',
@@ -52,7 +58,8 @@ class Harvest
 
     public function getRedirection()
     {
-        $headers = array_change_key_case($this->response->getHeaders());
+        $headers = $this->response->getHeaders();
+        $headers = array_change_key_case($headers ? $headers : []);
         if (isset($headers['location'])) {
             return phpUri::parse($this->response->getEffectiveUrl())->join($headers['location']);
         }
