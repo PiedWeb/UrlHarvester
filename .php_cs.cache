@@ -1,0 +1,1 @@
+{"php":"7.2.10-0ubuntu0.18.04.1","version":"2.13.1","rules":{"array_syntax":{"syntax":"short"}},"hashes":{"src\/ExtractLinks.php":26575225,"src\/MetaDataRecoHarvester.php":3245993097,"src\/Helper.php":2740763615,"src\/Request.php":156261659,"src\/Make.php":2768933863,"src\/ExtractBreadcrumb.php":543264038}}

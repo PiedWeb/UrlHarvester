@@ -1,0 +1,50 @@
+{
+    "name": "piedweb/url-harvester",
+    "type": "library",
+    "description": "Harvest statistics and meta data from an URL or his source code (seo oriented).",
+    "keywords": [
+        "Pied Web",
+        "Url Meta Data Harvester",
+        "crawl",
+        "seo",
+        "meta data",
+        "url",
+        "canonical"
+    ],
+    "homepage": "https://dev.piedweb.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Robin D. (ak Pied Web)",
+            "email": "contact@robin-d.fr",
+            "homepage": "https://piedweb.com"
+        }
+    ],
+    "require": {
+        "php" : "~7.1",
+        "ropendev/simple_html_dom": "^1.7",
+        "piedweb/curl": "^0.0",
+        "pguardiario/phpuri": "^1.0",
+        "neitanod/forceutf8": "^2.0",
+        "piedweb/text-analyzer": "^0.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit" : ">=7.0",
+        "squizlabs/php_codesniffer": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "PiedWeb\\UrlHarvester\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PiedWeb\\UrlHarvester\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "check-style": "phpcs src tests",
+        "fix-style": "phpcbf src tests"
+    }
+}
