@@ -58,7 +58,6 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
         $bcItems = ExtractBreadcrumb::get($dom->save(), 'https://piedweb.com/', $url);
 
         foreach ($bcItems as $item) {
-            var_dump($item->getUrl());
             $this->assertTrue(strlen($item->getUrl())>10);
         }
     }

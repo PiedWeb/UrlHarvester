@@ -43,14 +43,6 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
         $this->assertTrue(is_array($harvest->getLinks()));
         $this->assertTrue(is_array($harvest->getLinks('internal')));
-        var_dump('internal');
-        $this->debugLinks($harvest->getLinks('internal'));
-        var_dump('self');
-        $this->debugLinks($harvest->getLinks('self'));
-        var_dump('sub');
-        $this->debugLinks($harvest->getLinks('sub'));
-        var_dump('external');
-        $this->debugLinks($harvest->getLinks('external'));
         $this->assertTrue(is_array($harvest->getLinks('self')));
         $this->assertTrue(is_array($harvest->getLinks('sub')));
         $this->assertTrue(is_array($harvest->getLinks('external')));
@@ -65,14 +57,5 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertSame('google.co.uk', $harvest->getDomain());
-    }
-
-    function debugLinks($links)
-    {
-        /**/
-        foreach($links as $link) {
-            var_dump($link->getUrl());
-        }
-        /**/
     }
 }

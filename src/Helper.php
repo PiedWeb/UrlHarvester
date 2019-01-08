@@ -6,7 +6,6 @@ use ForceUTF8\Encoding;
 
 class Helper
 {
-
     public function clean(string $source)
     {
         return trim(preg_replace('/\s{2,}/', ' ', Encoding::toUTF8($source)));

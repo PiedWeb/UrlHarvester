@@ -68,11 +68,11 @@ class Request
     ) {
         $request = new Request($url);
 
-        $request->tryHttps     = $tryHttps;
-        $request->userAgent    = $userAgent;
+        $request->tryHttps = $tryHttps;
+        $request->userAgent = $userAgent;
         $request->donwloadOnly = $donwloadOnly;
-        $request->language     = $language;
-        $request->proxy        = $proxy;
+        $request->language = $language;
+        $request->proxy = $proxy;
 
         $request->request();
 

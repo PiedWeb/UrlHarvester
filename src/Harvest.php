@@ -1,11 +1,11 @@
 <?php
+
 namespace PiedWeb\UrlHarvester;
 
-use \PiedWeb\Curl\Response;
-use \PiedWeb\TextAnalyzer\Analyzer as TextAnalyzer;
-use \phpuri;
-use \simple_html_dom;
-use ForceUTF8\Encoding;
+use PiedWeb\Curl\Response;
+use PiedWeb\TextAnalyzer\Analyzer as TextAnalyzer;
+use phpuri;
+use simple_html_dom;
 
 class Harvest
 {
@@ -27,7 +27,7 @@ class Harvest
         string $language = 'en,en-US;q=0.5',
         bool   $tryHttps = false
     ) {
-        $request  = Request::make($url, $userAgent, 'text/html', $language, $tryHttps);
+        $request = Request::make($url, $userAgent, 'text/html', $language, $tryHttps);
         $response = $request->getResponse();
 
         if ($response instanceof Response) {
@@ -50,7 +50,6 @@ class Harvest
         return $this->response;
     }
 
-
     public function getRedirection()
     {
         $headers = array_change_key_case($this->response->getHeaders());
@@ -71,7 +70,6 @@ class Harvest
         return $this->dom;
     }
 
-
     private function find($selector, $number = null)
     {
         return $this->getDom()->find($selector, $number);
@@ -81,7 +79,6 @@ class Harvest
     {
         return $this->find($selector, 0);
     }
-
 
     /**
      * Return content inside a selector.
@@ -119,7 +116,6 @@ class Harvest
         return null !== $meta ? (isset($meta->content) ? Helper::clean($meta->content) : '') : null;
     }
 
-
     /**
      * Renvoie le contenu de l'attribut href de la balise link rel=canonical.
      *
@@ -128,6 +124,7 @@ class Harvest
     public function getCanonical()
     {
         $canonical = $this->findOne('link[rel=canonical]');
+
         return null !== $canonical ? (isset($canonical->href) ? $canonical->href : '') : null;
     }
 
@@ -138,7 +135,6 @@ class Harvest
     {
         return $this->response->getEffectiveUrl() == $this->getCanonical();
     }
-
 
     public function getKws()
     {
@@ -201,5 +197,4 @@ class Harvest
 
         return $this->domain;
     }
-
 }

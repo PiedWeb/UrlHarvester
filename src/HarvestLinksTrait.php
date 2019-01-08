@@ -1,9 +1,9 @@
 <?php
 
 namespace PiedWeb\UrlHarvester;
+
 trait HarvestLinksTrait
 {
-
     /**
      * @var array
      */
@@ -15,9 +15,9 @@ trait HarvestLinksTrait
 
     private $domainWithScheme;
 
-    abstract function getDom();
+    abstract public function getDom();
 
-    abstract function getDomain();
+    abstract public function getDomain();
 
     public function getLinkedRessources()
     {
@@ -26,28 +26,28 @@ trait HarvestLinksTrait
 
     public function getLinks($type = null)
     {
-        if ($this->links === null) {
+        if (null === $this->links) {
             $this->links = ExtractLinks::get($this->getDom(), $this->response->getEffectiveUrl());
             $this->classifyLinks();
         }
 
-        switch($type) {
-        case 'self':
-            return $this->selfs;
-        case 'internal':
-            return $this->internals;
-        case 'sub':
-            return $this->subs;
-        case 'external':
-            return $this->externals;
-        default:
-            return $this->links;
+        switch ($type) {
+            case 'self':
+                return $this->selfs;
+            case 'internal':
+                return $this->internals;
+            case 'sub':
+                return $this->subs;
+            case 'external':
+                return $this->externals;
+            default:
+                return $this->links;
         }
     }
 
     public function getDomainAndScheme()
     {
-        if ($this->domainWithScheme === null) {
+        if (null === $this->domainWithScheme) {
             $url = parse_url($this->response->getEffectiveUrl());
             $this->domainWithScheme = $url['scheme'].'://'.$url['host'];
         }
@@ -60,8 +60,7 @@ trait HarvestLinksTrait
         $links = $this->getLinks();
         $internals = [];
 
-        foreach ($links as $link)
-        {
+        foreach ($links as $link) {
             $urlParsed = parse_url($link->getUrl());
 
             if (preg_match('/^'.preg_quote($this->getDomainAndScheme().'/', '/').'/si', $link->getUrl().'/')) {
@@ -70,9 +69,8 @@ trait HarvestLinksTrait
                 } else {
                     $this->internals[] = $link;
                 }
-            } else if (preg_match('/'.preg_quote($this->getDomain(), '/').'$/si', $urlParsed['host'])) {
+            } elseif (preg_match('/'.preg_quote($this->getDomain(), '/').'$/si', $urlParsed['host'])) {
                 $this->subs[] = $link;
-
             } else {
                 $this->externals[] = $link;
             }

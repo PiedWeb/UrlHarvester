@@ -2,7 +2,6 @@
 
 namespace PiedWeb\UrlHarvester;
 
-use ForceUTF8\Encoding;
 use phpUri;
 
 class ExtractLinks
@@ -107,34 +106,5 @@ class ExtractLinks
         return
             0 !== stripos($href, 'mailto:')
             && 0 !== strpos($href, 'javascript:');
-    }
-}
-
-class Link
-{
-    private $url;
-    private $anchor;
-    private $element;
-
-    public function __construct(string $url, $dom)
-    {
-        $this->url = $url;
-        $this->anchor = substr(Helper::clean($dom->innertext), 0, 100);
-        $this->dom = $dom;
-    }
-
-    public function getUrl()
-    {
-        return $this->url;
-    }
-
-    public function getAnchor()
-    {
-        return $this->anchor;
-    }
-
-    public function getElement()
-    {
-        $this->dom;
     }
 }
