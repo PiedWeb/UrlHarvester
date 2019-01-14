@@ -22,4 +22,9 @@ class BreadcrumbItem
     {
         return $this->name;
     }
+
+    public function getCleanName()
+    {
+        return substr(strip_tags($this->name), 0, 100);
+    }
 }

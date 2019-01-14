@@ -20,6 +20,11 @@ class Link
         return $this->url;
     }
 
+    public function getPageUrl()
+    {
+        return preg_replace('/(\#.*)/si', '', $this->url);
+    }
+
     public function getAnchor()
     {
         return $this->anchor;

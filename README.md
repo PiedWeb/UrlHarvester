@@ -38,12 +38,14 @@ Harvest::fromUrl($url)
     ->getRes...
 
     ->getTag('h1') // @return first tag content (could be html)
+    ->getUniqueTag('h1') // @return first tag content in utf8 (could contain html)
     ->getMeta('description') // @return string from content attribute or NULL
     ->getCanonical() // @return string|NULL
     ->isCanonicalCorrect() // @return bool
     ->getRatioTxtCode() // @return int
     ->getKws() // @return 10 more used words
     ->getBreadCrumb()
+    ->isIndexable($userAgent = 'googlebot') // @return int corresponding to a const from Indexable
 
     ->getLinks()
     ->getLinks('internal')
@@ -63,8 +65,6 @@ use \PiedWeb\UrlHarvester\ExtractBreadcrumb;
 
 Request::make(string $url, string $userAgent, $donwloadOnly = 'text/html', string $language = 'en-US,en;q=0.5', bool $tryHttps = false, ?string $proxy = null)
   ->getResponse();      // @return \PiedWeb\Curl\Response;
-  ->get();      // @return \PiedWeb\Curl\Request;
-  ->get()->hasError(); // Useful @return int with curl error number
 
 
 ExtractLinks::get(\simple_html_dom $dom, string $baseUrl, $selector = ExtractLinks::SELECT_A); // @return array

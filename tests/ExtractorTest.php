@@ -20,9 +20,9 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
 
     private function getDom(?string $url = null)
     {
-        if ($this->dom === null) {
+        if (null === $this->dom) {
             $request = Request::make(
-                $url !== null ? $url : $this->getUrl(),
+                null !== $url ? $url : $this->getUrl(),
                 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0'
             );
 
@@ -38,7 +38,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
         $links = ExtractLinks::get($this->getDom(), $this->getUrl());
 
         foreach ($links as $link) {
-            $this->assertTrue(strlen($link->getUrl())>10);
+            $this->assertTrue(strlen($link->getUrl()) > 10);
         }
     }
 
@@ -47,7 +47,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
         $links = ExtractLinks::get($this->getDom(), $this->getUrl(), ExtractLinks::SELECT_ALL);
 
         foreach ($links as $link) {
-            $this->assertTrue(strlen($link->getUrl())>10);
+            $this->assertTrue(strlen($link->getUrl()) > 10);
         }
     }
 
@@ -58,7 +58,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
         $bcItems = ExtractBreadcrumb::get($dom->save(), 'https://piedweb.com/', $url);
 
         foreach ($bcItems as $item) {
-            $this->assertTrue(strlen($item->getUrl())>10);
+            $this->assertTrue(strlen($item->getUrl()) > 10);
         }
     }
 

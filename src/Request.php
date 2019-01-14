@@ -38,7 +38,7 @@ class Request
     /**
      * @var string
      */
-    private $donwloadOnly;
+    private $downloadOnly;
 
     /**
      * @var CurlRequest
@@ -61,7 +61,7 @@ class Request
     public static function make(
         string  $url,
         string  $userAgent,
-        string  $donwloadOnly = 'text/html',
+        $downloadOnly = '200;html',
         string  $language = 'en,en-US;q=0.5',
         bool    $tryHttps = false,
         ?string $proxy = null
@@ -70,7 +70,7 @@ class Request
 
         $request->tryHttps = $tryHttps;
         $request->userAgent = $userAgent;
-        $request->donwloadOnly = $donwloadOnly;
+        $request->downloadOnly = $downloadOnly;
         $request->language = $language;
         $request->proxy = $proxy;
 
@@ -123,32 +123,46 @@ class Request
         $this->request
             ->setReturnHeader()
             ->setEncodingGzip()
+            ->setUserAgent($this->userAgent)
             ->setDefaultSpeedOptions()
             ->setOpt(CURLOPT_SSL_VERIFYHOST, 0)
             ->setOpt(CURLOPT_SSL_VERIFYPEER, 0)
-            ->setOpt(CURLOPT_MAXREDIRS, 0)
+            ->setOpt(CURLOPT_MAXREDIRS, 1)
             ->setOpt(CURLOPT_COOKIE, false)
             ->setOpt(CURLOPT_CONNECTTIMEOUT, 20)
             ->setOpt(CURLOPT_TIMEOUT, 80);
-        if ($this->donwloadOnly) {
-            $this->request->setDownloadOnlyIf($this->donwloadOnly);
-        }
+
+        $this->setDownloadOnly();
+
         if ($this->proxy) {
             $this->request->setProxy($this->proxy);
         }
+
         $this->request->setOpt(CURLOPT_HTTPHEADER, $this->prepareHeadersForRequest());
 
         $this->response = $this->request->exec();
 
         // Recrawl https version if it's asked
         if (true === $this->tryHttps && false !== ($httpsUrl = $this->amIRedirectToHttps())) {
-            $requestForHttps = self::make($httpsUrl, $this->userAgent, $this->donwloadOnly, $this->language);
+            $requestForHttps = self::make($httpsUrl, $this->userAgent, $this->downloadOnly, $this->language);
             if (!$requestForHttps->get()->hasError()) { // if no error, $this becode https request
                 return $requestForHttps;
             }
         }
 
         return $this;
+    }
+
+    protected function setDownloadOnly()
+    {
+        if ($this->downloadOnly) {
+            if ('200;html' == $this->downloadOnly) {
+                $download = new \PiedWeb\Curl\MultipleCheckInHeaders();
+                $this->request->setDownloadOnlyIf([$download, 'check']);
+            } elseif (is_callable($this->downloadOnly)) {
+                $this->request->setDownloadOnlyIf($this->downloadOnly);
+            }
+        }
     }
 
     /**

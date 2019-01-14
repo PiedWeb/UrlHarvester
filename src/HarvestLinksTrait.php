@@ -4,16 +4,12 @@ namespace PiedWeb\UrlHarvester;
 
 trait HarvestLinksTrait
 {
+
     /**
      * @var array
      */
     protected $links;
-    protected $selfs = [];
-    protected $internals = [];
-    protected $subs = [];
-    protected $externals = [];
-
-    private $domainWithScheme;
+    protected $linksPerType;
 
     abstract public function getDom();
 
@@ -32,47 +28,76 @@ trait HarvestLinksTrait
         }
 
         switch ($type) {
-            case 'self':
-                return $this->selfs;
-            case 'internal':
-                return $this->internals;
-            case 'sub':
-                return $this->subs;
-            case 'external':
-                return $this->externals;
+            case self::LINK_SELF:
+                return $this->linksPerType[self::LINK_SELF];
+            case self::LINK_INTERNAL:
+                return $this->linksPerType[self::LINK_INTERNAL];
+            case self::LINK_SUB:
+                return $this->linksPerType[self::LINK_SUB];
+            case self::LINK_EXTERNAL:
+                return $this->linksPerType[self::LINK_EXTERNAL];
             default:
                 return $this->links;
         }
     }
 
-    public function getDomainAndScheme()
+    public function getNbrDuplicateLinks()
     {
-        if (null === $this->domainWithScheme) {
-            $url = parse_url($this->response->getEffectiveUrl());
-            $this->domainWithScheme = $url['scheme'].'://'.$url['host'];
+        $links = $this->getLinks();
+        $u = [];
+        foreach ($links as $link) {
+            $u[$link->getUrl()] = 1;
         }
 
-        return $this->domainWithScheme;
+        return count($links) - count($u);
     }
+
+    abstract function getDomainAndScheme();
 
     public function classifyLinks()
     {
         $links = $this->getLinks();
 
         foreach ($links as $link) {
-            $urlParsed = parse_url($link->getUrl());
-
-            if (preg_match('/^'.preg_quote($this->getDomainAndScheme().'/', '/').'/si', $link->getUrl().'/')) {
-                if (preg_replace('/(\#.*)/si', '', $link->getUrl()) == $this->response->getEffectiveUrl()) {
-                    $this->selfs[] = $link;
-                } else {
-                    $this->internals[] = $link;
-                }
-            } elseif (preg_match('/'.preg_quote($this->getDomain(), '/').'$/si', $urlParsed['host'])) {
-                $this->subs[] = $link;
-            } else {
-                $this->externals[] = $link;
-            }
+            $type = $this->getType($link->getPageUrl());
+            $this->linksPerType[$type][] = $link;
         }
+    }
+
+    public function isInternalType(string $url)
+    {
+        return strpos($url, $this->getDomainAndScheme()) === 0;
+    }
+
+    public function isSubType(string $host)
+    {
+        return strtolower(substr($host, -strlen($this->getDomain()))) === $this->getDomain();
+    }
+
+    public function isSelfType(string $url)
+    {
+        if (strpos($url, '#') !== 0) {
+            $url = substr($url, 0, -(strlen(parse_url($url, PHP_URL_FRAGMENT)) + 1));
+        }
+
+        return $this->isInternalType($url) && $url == $this->response->getEffectiveUrl();
+    }
+
+    public function getType(string $url): string
+    {
+        if ($this->isSelfType($url)) {
+            return self::LINK_SELF;
+        } elseif ($this->isInternalType($url)) {
+            return self::LINK_INTERNAL;
+        } elseif ($this->isSubType(parse_url($url, PHP_URL_HOST))) {
+            return self::LINK_SUB;
+        }
+
+        return self::LINK_EXTERNAL;
+    }
+
+    public function getAbsoluteInternalLink(string $url)
+    {
+        return substr($url, strlen($this->getDomainAndScheme()));
     }
 }

@@ -6,10 +6,17 @@ use PiedWeb\Curl\Response;
 use PiedWeb\TextAnalyzer\Analyzer as TextAnalyzer;
 use phpuri;
 use simple_html_dom;
+use Spatie\Robots\RobotsTxt;
+use PiedWeb\Curl\Request as CurlRequest;
 
 class Harvest
 {
     use HarvestLinksTrait;
+
+    const LINK_SELF = 1;
+    const LINK_INTERNAL = 2;
+    const LINK_SUB = 3;
+    const LINK_EXTERNAL = 4;
 
     /**
      * @var Response
@@ -27,20 +34,26 @@ class Harvest
     /** @var string */
     protected $domain;
 
+    /** @var RobotsTxt|string (empty string) */
+    protected $robotsTxt;
+
+    /** @var string */
+    private $domainWithScheme;
+
     public static function fromUrl(
         string $url,
         string $userAgent = 'Bot: Url Harvester',
         string $language = 'en,en-US;q=0.5',
         bool   $tryHttps = false
     ) {
-        $request = Request::make($url, $userAgent, 'text/html', $language, $tryHttps);
+        $request = Request::make($url, $userAgent, '200;html', $language, $tryHttps);
         $response = $request->getResponse();
 
         if ($response instanceof Response) {
             return new self($response);
         }
 
-        return $request->getError();
+        return $request->get()->getError();
     }
 
     /**
@@ -120,7 +133,7 @@ class Harvest
     {
         $meta = $this->findOne('meta[name='.$name.']');
 
-        return null !== $meta ? (isset($meta->content) ? Helper::clean($meta->content) : '') : null;
+        return null !== $meta ? (isset($meta->content) ? Helper::clean($meta->content) : '') : '';
     }
 
     /**
@@ -140,7 +153,9 @@ class Harvest
      */
     public function isCanonicalCorrect()
     {
-        return $this->response->getEffectiveUrl() == $this->getCanonical();
+        $canonical = $this->getCanonical();
+
+        return $canonical ? $this->response->getEffectiveUrl() == $canonical : true;
     }
 
     public function getKws()
@@ -204,4 +219,57 @@ class Harvest
 
         return $this->domain;
     }
+
+    /**
+     * @return int correspond to a const from Indexable
+     */
+    public function isIndexable(?string $userAgent = 'googlebot')
+    {
+        return Indexable::isIndexable($this, $userAgent);
+    }
+
+
+    /**
+     * @return RobotsTxt|string containing the current Robots.txt or NULL if an error occured
+     *                          or empty string if robots is empty file
+     */
+    public function getRobotsTxt()
+    {
+        if ($this->robotsTxt === null) {
+            $url = $this->getDomainAndScheme().'/robots.txt';
+
+            $request = new CurlRequest($url);
+            $request
+                ->setDefaultSpeedOptions()
+                ->setDownloadOnlyIf(function($line){
+                    return 0 === stripos(trim($line), 'content-type') && false !== stripos($line, 'text/plain');
+                })
+                ->setUserAgent($this->getResponse()->getRequest()->getUserAgent())
+            ;
+            $result = $request->exec();
+
+            $noNeedToParse = ! $result instanceof \PiedWeb\Curl\Response || empty(trim($result->getContent()));
+
+            $this->robotsTxt = $noNeedToParse ? '' : new RobotsTxt($result->getContent());
+        }
+
+        return $this->robotsTxt;
+    }
+
+    public function getDomainAndScheme()
+    {
+        if (null === $this->domainWithScheme) {
+            $this->domainWithScheme = self::getDomainAndSchemeFrom($this->response->getEffectiveUrl());
+        }
+
+        return $this->domainWithScheme;
+    }
+
+    public static function getDomainAndSchemeFrom(string $url)
+    {
+        $url = parse_url($url);
+
+        return $url['scheme'].'://'.$url['host'];
+    }
+
 }

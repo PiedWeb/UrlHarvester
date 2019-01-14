@@ -8,14 +8,12 @@ use PiedWeb\UrlHarvester\Request;
 
 class RequestTest extends \PHPUnit\Framework\TestCase
 {
-
     public function testFailedRequest()
     {
         $request = Request::make('https://dzejnd'.rand(10000, 9999999999).'.biz', 'Hello :)');
 
         $this->assertSame(6, $request->get()->hasError());
     }
-
 
     public function testRequest()
     {
@@ -24,7 +22,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0'
         );
 
-        $this->assertTrue(strlen($request->getResponse()->getContent())>10);
+        $this->assertTrue(strlen($request->getResponse()->getContent()) > 10);
         $this->assertTrue(!empty($request->getResponse()->getHeaders()));
     }
 }
