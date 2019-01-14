@@ -31,11 +31,6 @@ class Request
     private $proxy;
 
     /**
-     * @var bool
-     */
-    private $tryHttps;
-
-    /**
      * @var string
      */
     private $downloadOnly;
@@ -63,20 +58,16 @@ class Request
         string  $userAgent,
         $downloadOnly = '200;html',
         string  $language = 'en,en-US;q=0.5',
-        bool    $tryHttps = false,
         ?string $proxy = null
     ) {
         $request = new Request($url);
 
-        $request->tryHttps = $tryHttps;
-        $request->userAgent = $userAgent;
+        $request->userAgent    = $userAgent;
         $request->downloadOnly = $downloadOnly;
-        $request->language = $language;
-        $request->proxy = $proxy;
+        $request->language     = $language;
+        $request->proxy        = $proxy;
 
-        $request->request();
-
-        return $request;
+        return $request->request();
     }
 
     private function __construct($url)
@@ -115,7 +106,6 @@ class Request
     }
 
     /**
-     * @return self
      */
     private function request()
     {
@@ -142,15 +132,7 @@ class Request
 
         $this->response = $this->request->exec();
 
-        // Recrawl https version if it's asked
-        if (true === $this->tryHttps && false !== ($httpsUrl = $this->amIRedirectToHttps())) {
-            $requestForHttps = self::make($httpsUrl, $this->userAgent, $this->downloadOnly, $this->language);
-            if (!$requestForHttps->get()->hasError()) { // if no error, $this becode https request
-                return $requestForHttps;
-            }
-        }
-
-        return $this;
+        return $this->response;
     }
 
     protected function setDownloadOnly()
@@ -163,36 +145,5 @@ class Request
                 $this->request->setDownloadOnlyIf($this->downloadOnly);
             }
         }
-    }
-
-    /**
-     * @return CurlRequest
-     */
-    public function get()
-    {
-        return $this->request;
-    }
-
-    /**
-     * @return Response|int corresponding to the curl error
-     */
-    public function getResponse()
-    {
-        return $this->response;
-    }
-
-    /**
-     * @return string|false
-     */
-    private function amIRedirectToHttps()
-    {
-        $headers = $this->response->getHeaders();
-        $headers = array_change_key_case(null !== $headers ? $headers : []);
-        $redirUrl = isset($headers['location']) ? $headers['location'] : null;
-        if (null !== $redirUrl && ($httpsUrl = preg_replace('#^http://#', 'https://', $this->url, 1)) == $redirUrl) {
-            return $httpsUrl;
-        }
-
-        return false;
     }
 }

@@ -6,17 +6,33 @@ namespace PiedWeb\UrlHarvester\Test;
 
 use PiedWeb\UrlHarvester\Harvest;
 use PiedWeb\UrlHarvester\Indexable;
-use  Spatie\Robots\RobotsTxt;
 
 class HarvestTest extends \PHPUnit\Framework\TestCase
 {
+
+    private static $harvest;
+
+    private function getUrl()
+    {
+        return 'https://www.piedweb.com/a-propos';
+    }
+
+    private function getHarvest()
+    {
+        if (null === self::$harvest) {
+            self::$harvest = Harvest::fromUrl(
+                $this->getUrl(),
+                'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0'
+            );
+        }
+
+        return self::$harvest;
+    }
+
     public function testHarvest()
     {
-        $url = 'https://www.piedweb.com/a-propos';
-        $harvest = Harvest::fromUrl(
-            $url,
-            'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0'
-        );
+        $harvest = $this->getHarvest();
+        $url     = $this->getUrl();
 
         // Just check Curl  is doing is job
         $this->assertTrue($harvest->getResponse()->getInfo('total_time') > 0.00000001);
@@ -37,19 +53,20 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
     public function testHarvestLinks()
     {
-        $url = 'https://piedweb.com/';
-        $harvest = Harvest::fromUrl(
-            $url,
-            'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0'
-        );
+        $harvest = $this->getHarvest();
+        $url     = $this->getUrl();
 
+        $this->assertTrue(is_array($harvest->getLinkedRessources()));
         $this->assertTrue(is_array($harvest->getLinks()));
-        $this->assertTrue(is_array($harvest->getLinks('internal')));
-        $this->assertTrue(is_array($harvest->getLinks('self')));
-        $this->assertTrue(is_array($harvest->getLinks('sub')));
-        $this->assertTrue(is_array($harvest->getLinks('external')));
+        $this->assertTrue(is_array($harvest->getLinks(Harvest::LINK_SELF)));
+        $this->assertTrue(is_array($harvest->getLinks(Harvest::LINK_INTERNAL)));
+        $this->assertTrue(is_array($harvest->getLinks(Harvest::LINK_SUB)));
+        $this->assertTrue(is_array($harvest->getLinks(Harvest::LINK_EXTERNAL)));
+        $this->assertTrue(is_int($harvest->getNbrDuplicateLinks()));
+        $this->assertSame('/a-propos', $harvest->getAbsoluteInternalLink($this->getUrl()));
     }
 
+    /**/
     public function testRedirection()
     {
         $url = 'https://www.piedweb.com/';
@@ -59,7 +76,8 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertSame('https://piedweb.com/', $harvest->getRedirection());
-    }
+        $this->assertSame(Indexable::NOT_INDEXABLE_3XX, $harvest->isIndexable());
+    }/**/
 
     public function testDomain()
     {
@@ -81,5 +99,9 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertSame(Indexable::NOT_INDEXABLE_ROBOTS, $harvest->isIndexable());
+
+        $indexable = new Indexable($this->getHarvest());
+        $this->assertTrue($indexable->metaAllows());
+        $this->assertTrue($indexable->headersAllow());
     }
 }

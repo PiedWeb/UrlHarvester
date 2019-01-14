@@ -11,26 +11,26 @@ use PiedWeb\UrlHarvester\ExtractBreadcrumb;
 
 class ExtractorTest extends \PHPUnit\Framework\TestCase
 {
-    private $dom;
+    private static $dom;
 
     private function getUrl()
     {
-        return 'https://piedweb.com/';
+        return 'https://piedweb.com/a-propos';
     }
 
-    private function getDom(?string $url = null)
+    private function getDom()
     {
-        if (null === $this->dom) {
+        if (null === self::$dom) {
             $request = Request::make(
-                null !== $url ? $url : $this->getUrl(),
+                $this->getUrl(),
                 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0'
             );
 
-            $this->dom = new \simple_html_dom();
-            $this->dom->load($request->getResponse()->getContent());
+            self::$dom = new \simple_html_dom();
+            self::$dom->load($request->getContent());
         }
 
-        return $this->dom;
+        return self::$dom;
     }
 
     public function testExtractLinks()
@@ -48,17 +48,28 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
 
         foreach ($links as $link) {
             $this->assertTrue(strlen($link->getUrl()) > 10);
+            break;
+        }
+
+        $links = ExtractLinks::get($this->getDom(), $this->getUrl(), ExtractLinks::SELECT_A);
+
+        foreach ($links as $link) {
+            $this->assertTrue(strlen($link->getUrl()) > 10);
+            $this->assertTrue(strlen($link->getAnchor()) > 1);
+            $this->assertTrue(strlen($link->getElement()->href) >= 1);
+            break;
         }
     }
 
     public function testExtractBreadcrumb()
     {
-        $url = 'https://piedweb.com/a-propos';
-        $dom = $this->getDom($url);
-        $bcItems = ExtractBreadcrumb::get($dom->save(), 'https://piedweb.com/', $url);
+        $dom = $this->getDom();
+        $bcItems = ExtractBreadcrumb::get($dom->save(), 'https://piedweb.com/', $this->getUrl());
 
         foreach ($bcItems as $item) {
             $this->assertTrue(strlen($item->getUrl()) > 10);
+            $this->assertTrue(strlen($item->getName()) > 1);
+            $this->assertTrue(strlen($item->getCleanName()) > 1);
         }
     }
 

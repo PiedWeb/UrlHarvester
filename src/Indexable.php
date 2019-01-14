@@ -2,9 +2,7 @@
 
 namespace PiedWeb\UrlHarvester;
 
-use Spatie\Robots\RobotsTxt;
 use Spatie\Robots\RobotsHeaders;
-use PiedWeb\Curl\Request;
 
 class Indexable
 {
@@ -28,13 +26,13 @@ class Indexable
 
     public function __construct(Harvest $harvest, string $isIndexableFor = 'googlebot')
     {
-        $this->harvest        = $harvest;
+        $this->harvest = $harvest;
         $this->isIndexableFor = $isIndexableFor;
     }
 
     public function robotsTxtAllows()
     {
-        $url       = $this->harvest->getResponse()->getUrl();
+        $url = $this->harvest->getResponse()->getUrl();
         $robotsTxt = $this->harvest->getRobotsTxt();
 
         return '' === $robotsTxt ? true : $robotsTxt->allows($url, $this->isIndexableFor);
@@ -42,10 +40,10 @@ class Indexable
 
     public function metaAllows()
     {
-        $meta    = $this->harvest->getMeta($this->isIndexableFor);
+        $meta = $this->harvest->getMeta($this->isIndexableFor);
         $generic = $this->harvest->getMeta('robots');
 
-        return ! (false !== stripos($meta, 'noindex') || false !== stripos($generic, 'noindex'));
+        return !(false !== stripos($meta, 'noindex') || false !== stripos($generic, 'noindex'));
     }
 
     public function headersAllow()

@@ -48,10 +48,11 @@ Harvest::fromUrl($url)
     ->isIndexable($userAgent = 'googlebot') // @return int corresponding to a const from Indexable
 
     ->getLinks()
-    ->getLinks('internal')
-    ->getLinks('self')
-    ->getLinks('sub')
-    ->getLinks('external')
+    ->getLinks(Harvest::LINK_SELF)
+    ->getLinks(Harvest::LINK_INTERNAL)
+    ->getLinks(Harvest::LINK_SUB)
+    ->getLinks(Harvest::LINK_EXTERNAL)
+    ->getLinkedRessources() // Return an array with all attributes containing a href or a src property
 
     ->getDomain()
     ->getBaseUrl()
@@ -63,8 +64,8 @@ use \PiedWeb\UrlHarvester\Request;
 use \PiedWeb\UrlHarvester\ExtractLinks;
 use \PiedWeb\UrlHarvester\ExtractBreadcrumb;
 
-Request::make(string $url, string $userAgent, $donwloadOnly = 'text/html', string $language = 'en-US,en;q=0.5', bool $tryHttps = false, ?string $proxy = null)
-  ->getResponse();      // @return \PiedWeb\Curl\Response;
+Request::make(string $url, string $userAgent, $donwloadOnly = 'text/html', string $language = 'en-US,en;q=0.5', ?string $proxy = null)
+// @return \PiedWeb\Curl\Response or int curl error
 
 
 ExtractLinks::get(\simple_html_dom $dom, string $baseUrl, $selector = ExtractLinks::SELECT_A); // @return array

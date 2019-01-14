@@ -11,8 +11,17 @@ class Link
     public function __construct(string $url, $element)
     {
         $this->url = $url;
-        $this->anchor = substr(Helper::clean($element->innertext), 0, 100);
+        $this->setAnchor($element);
         $this->element = $element;
+    }
+
+    protected function setAnchor($element)
+    {
+        $this->anchor = substr(Helper::clean($element->plaintext), 0, 100);
+
+        if (empty($this->anchor) && $element->find('*[alt]', 0)) {
+            $this->anchor = substr(Helper::clean($element->find('*[alt]', 0)->alt), 0, 100);
+        }
     }
 
     public function getUrl()
@@ -32,6 +41,6 @@ class Link
 
     public function getElement()
     {
-        $this->element;
+        return $this->element;
     }
 }

@@ -43,17 +43,15 @@ class Harvest
     public static function fromUrl(
         string $url,
         string $userAgent = 'Bot: Url Harvester',
-        string $language = 'en,en-US;q=0.5',
-        bool   $tryHttps = false
+        string $language = 'en,en-US;q=0.5'
     ) {
-        $request = Request::make($url, $userAgent, '200;html', $language, $tryHttps);
-        $response = $request->getResponse();
+        $response = Request::make($url, $userAgent, '200;html', $language);
 
         if ($response instanceof Response) {
             return new self($response);
         }
 
-        return $request->get()->getError();
+        return $response;
     }
 
     /**
@@ -195,6 +193,21 @@ class Harvest
         );
     }
 
+    /**
+     * @return string|false
+     */
+    public function amIRedirectToHttps()
+    {
+        $headers = $this->response->getHeaders();
+        $headers = array_change_key_case(null !== $headers ? $headers : []);
+        $redirUrl = isset($headers['location']) ? $headers['location'] : null;
+        if (null !== $redirUrl && ($httpsUrl = preg_replace('#^http://#', 'https://', $this->url, 1)) == $redirUrl) {
+            return $httpsUrl;
+        }
+
+        return false;
+    }
+
     public function getBaseUrl()
     {
         if (!isset($this->baseUrl)) {
@@ -223,11 +236,10 @@ class Harvest
     /**
      * @return int correspond to a const from Indexable
      */
-    public function isIndexable(?string $userAgent = 'googlebot')
+    public function isIndexable(string $userAgent = 'googlebot')
     {
         return Indexable::isIndexable($this, $userAgent);
     }
-
 
     /**
      * @return RobotsTxt|string containing the current Robots.txt or NULL if an error occured
@@ -235,20 +247,20 @@ class Harvest
      */
     public function getRobotsTxt()
     {
-        if ($this->robotsTxt === null) {
+        if (null === $this->robotsTxt) {
             $url = $this->getDomainAndScheme().'/robots.txt';
 
             $request = new CurlRequest($url);
             $request
                 ->setDefaultSpeedOptions()
-                ->setDownloadOnlyIf(function($line){
+                ->setDownloadOnlyIf(function ($line) {
                     return 0 === stripos(trim($line), 'content-type') && false !== stripos($line, 'text/plain');
                 })
                 ->setUserAgent($this->getResponse()->getRequest()->getUserAgent())
             ;
             $result = $request->exec();
 
-            $noNeedToParse = ! $result instanceof \PiedWeb\Curl\Response || empty(trim($result->getContent()));
+            $noNeedToParse = !$result instanceof \PiedWeb\Curl\Response || empty(trim($result->getContent()));
 
             $this->robotsTxt = $noNeedToParse ? '' : new RobotsTxt($result->getContent());
         }
@@ -271,5 +283,4 @@ class Harvest
 
         return $url['scheme'].'://'.$url['host'];
     }
-
 }

@@ -4,7 +4,6 @@ namespace PiedWeb\UrlHarvester;
 
 trait HarvestLinksTrait
 {
-
     /**
      * @var array
      */
@@ -28,14 +27,14 @@ trait HarvestLinksTrait
         }
 
         switch ($type) {
-            case self::LINK_SELF:
-                return $this->linksPerType[self::LINK_SELF];
-            case self::LINK_INTERNAL:
-                return $this->linksPerType[self::LINK_INTERNAL];
-            case self::LINK_SUB:
-                return $this->linksPerType[self::LINK_SUB];
-            case self::LINK_EXTERNAL:
-                return $this->linksPerType[self::LINK_EXTERNAL];
+            case Harvest::LINK_SELF:
+                return $this->linksPerType[Harvest::LINK_SELF] ?? [];
+            case Harvest::LINK_INTERNAL:
+                return $this->linksPerType[Harvest::LINK_INTERNAL] ?? [];;
+            case Harvest::LINK_SUB:
+                return $this->linksPerType[Harvest::LINK_SUB] ?? [];;
+            case Harvest::LINK_EXTERNAL:
+                return $this->linksPerType[Harvest::LINK_EXTERNAL] ?? [];;
             default:
                 return $this->links;
         }
@@ -52,7 +51,7 @@ trait HarvestLinksTrait
         return count($links) - count($u);
     }
 
-    abstract function getDomainAndScheme();
+    abstract public function getDomainAndScheme();
 
     public function classifyLinks()
     {
@@ -66,7 +65,7 @@ trait HarvestLinksTrait
 
     public function isInternalType(string $url)
     {
-        return strpos($url, $this->getDomainAndScheme()) === 0;
+        return 0 === strpos($url, $this->getDomainAndScheme());
     }
 
     public function isSubType(string $host)
@@ -76,7 +75,7 @@ trait HarvestLinksTrait
 
     public function isSelfType(string $url)
     {
-        if (strpos($url, '#') !== 0) {
+        if (0 !== strpos($url, '#')) {
             $url = substr($url, 0, -(strlen(parse_url($url, PHP_URL_FRAGMENT)) + 1));
         }
 
@@ -86,14 +85,14 @@ trait HarvestLinksTrait
     public function getType(string $url): string
     {
         if ($this->isSelfType($url)) {
-            return self::LINK_SELF;
+            return Harvest::LINK_SELF;
         } elseif ($this->isInternalType($url)) {
-            return self::LINK_INTERNAL;
+            return Harvest::LINK_INTERNAL;
         } elseif ($this->isSubType(parse_url($url, PHP_URL_HOST))) {
-            return self::LINK_SUB;
+            return Harvest::LINK_SUB;
         }
 
-        return self::LINK_EXTERNAL;
+        return Harvest::LINK_EXTERNAL;
     }
 
     public function getAbsoluteInternalLink(string $url)

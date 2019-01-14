@@ -12,7 +12,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
     {
         $request = Request::make('https://dzejnd'.rand(10000, 9999999999).'.biz', 'Hello :)');
 
-        $this->assertSame(6, $request->get()->hasError());
+        $this->assertSame(6, $request);
     }
 
     public function testRequest()
@@ -22,7 +22,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0'
         );
 
-        $this->assertTrue(strlen($request->getResponse()->getContent()) > 10);
-        $this->assertTrue(!empty($request->getResponse()->getHeaders()));
+        $this->assertTrue(strlen($request->getContent()) > 10);
+        $this->assertTrue(!empty($request->getHeaders()));
     }
 }
