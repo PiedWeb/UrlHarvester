@@ -10,7 +10,7 @@ class Link
 
     public function __construct(string $url, $element)
     {
-        $this->url = $url;
+        $this->url = trim($url);
         $this->setAnchor($element);
         $this->element = $element;
     }

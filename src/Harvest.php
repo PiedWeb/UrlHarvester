@@ -182,7 +182,7 @@ class Harvest
     /**
      * Return an array of object with two elements Link and anchor.
      *
-     * @return array or NULL if we didn't found breadcrumb
+     * @return array|null if we didn't found breadcrumb
      */
     public function getBreadCrumb(?string $separator = null)
     {

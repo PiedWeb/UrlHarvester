@@ -86,9 +86,14 @@ trait HarvestLinksTrait
     {
         if ($this->isSelfType($url)) {
             return Harvest::LINK_SELF;
-        } elseif ($this->isInternalType($url)) {
+        }
+
+        if ($this->isInternalType($url)) {
             return Harvest::LINK_INTERNAL;
-        } elseif ($this->isSubType(parse_url($url, PHP_URL_HOST))) {
+        }
+
+        $host = parse_url($url, PHP_URL_HOST);
+        if ($host && $this->isSubType($host)) {
             return Harvest::LINK_SUB;
         }
 
