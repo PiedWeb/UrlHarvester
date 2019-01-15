@@ -25,4 +25,14 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(strlen($request->getContent()) > 10);
         $this->assertTrue(!empty($request->getHeaders()));
     }
+
+    public function testRequestRedir()
+    {
+        $request = Request::make(
+            'https://www.piedweb.com/',
+            'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0'
+        );
+
+        $this->assertSame($request->getHeaders()['Location'], 'https://piedweb.com/');
+    }
 }

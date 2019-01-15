@@ -9,7 +9,6 @@ use PiedWeb\UrlHarvester\Indexable;
 
 class HarvestTest extends \PHPUnit\Framework\TestCase
 {
-
     private static $harvest;
 
     private function getUrl()
@@ -32,7 +31,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
     public function testHarvest()
     {
         $harvest = $this->getHarvest();
-        $url     = $this->getUrl();
+        $url = $this->getUrl();
 
         // Just check Curl  is doing is job
         $this->assertTrue($harvest->getResponse()->getInfo('total_time') > 0.00000001);
@@ -54,7 +53,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
     public function testHarvestLinks()
     {
         $harvest = $this->getHarvest();
-        $url     = $this->getUrl();
+        $url = $this->getUrl();
 
         $this->assertTrue(is_array($harvest->getLinkedRessources()));
         $this->assertTrue(is_array($harvest->getLinks()));
@@ -66,7 +65,6 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('/a-propos', $harvest->getAbsoluteInternalLink($this->getUrl()));
     }
 
-    /**/
     public function testRedirection()
     {
         $url = 'https://www.piedweb.com/';
@@ -77,7 +75,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame('https://piedweb.com/', $harvest->getRedirection());
         $this->assertSame(Indexable::NOT_INDEXABLE_3XX, $harvest->isIndexable());
-    }/**/
+    }
 
     public function testDomain()
     {

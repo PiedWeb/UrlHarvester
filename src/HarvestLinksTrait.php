@@ -30,11 +30,11 @@ trait HarvestLinksTrait
             case Harvest::LINK_SELF:
                 return $this->linksPerType[Harvest::LINK_SELF] ?? [];
             case Harvest::LINK_INTERNAL:
-                return $this->linksPerType[Harvest::LINK_INTERNAL] ?? [];;
+                return $this->linksPerType[Harvest::LINK_INTERNAL] ?? [];
             case Harvest::LINK_SUB:
-                return $this->linksPerType[Harvest::LINK_SUB] ?? [];;
+                return $this->linksPerType[Harvest::LINK_SUB] ?? [];
             case Harvest::LINK_EXTERNAL:
-                return $this->linksPerType[Harvest::LINK_EXTERNAL] ?? [];;
+                return $this->linksPerType[Harvest::LINK_EXTERNAL] ?? [];
             default:
                 return $this->links;
         }

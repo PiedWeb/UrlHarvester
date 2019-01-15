@@ -41,7 +41,7 @@ class Request
     private $request;
 
     /**
-     * @var Response
+     * @var Response|int
      */
     private $response;
 
@@ -51,7 +51,7 @@ class Request
      * @param string $language
      * @param bool   $tryHttps
      *
-     * @return self
+     * @return Response|int corresponding to the curl error
      */
     public static function make(
         string  $url,
@@ -62,10 +62,10 @@ class Request
     ) {
         $request = new Request($url);
 
-        $request->userAgent    = $userAgent;
+        $request->userAgent = $userAgent;
         $request->downloadOnly = $downloadOnly;
-        $request->language     = $language;
-        $request->proxy        = $proxy;
+        $request->language = $language;
+        $request->proxy = $proxy;
 
         return $request->request();
     }
@@ -106,6 +106,7 @@ class Request
     }
 
     /**
+     * @return Response|int corresponding to the curl error
      */
     private function request()
     {
@@ -117,7 +118,8 @@ class Request
             ->setDefaultSpeedOptions()
             ->setOpt(CURLOPT_SSL_VERIFYHOST, 0)
             ->setOpt(CURLOPT_SSL_VERIFYPEER, 0)
-            ->setOpt(CURLOPT_MAXREDIRS, 1)
+            ->setOpt(CURLOPT_MAXREDIRS, 0)
+            ->setOpt(CURLOPT_FOLLOWLOCATION, false)
             ->setOpt(CURLOPT_COOKIE, false)
             ->setOpt(CURLOPT_CONNECTTIMEOUT, 20)
             ->setOpt(CURLOPT_TIMEOUT, 80);

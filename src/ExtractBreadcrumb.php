@@ -30,7 +30,7 @@ class ExtractBreadcrumb
      * @param string $baseUrl To get absolute urls
      * @param string $current The current url. If not set we thing it's the same than $baseUrl
      *
-     * @return array
+     * @return array|null
      */
     public static function get(string $source, string $baseUrl, $current = null)
     {
@@ -48,7 +48,7 @@ class ExtractBreadcrumb
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function extractBreadcrumb()
     {

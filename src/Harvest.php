@@ -184,13 +184,22 @@ class Harvest
      *
      * @return array or NULL if we didn't found breadcrumb
      */
-    public function getBreadCrumb()
+    public function getBreadCrumb(?string $separator = null)
     {
-        return ExtractBreadcrumb::get(
+        $breadcrumb = ExtractBreadcrumb::get(
             $this->response->getContent(),
             $this->getBaseUrl(),
             $this->response->getEffectiveUrl()
         );
+
+        if (null !== $separator && is_array($breadcrumb)) {
+            $breadcrumb = array_map(function ($item) {
+                return $item->getCleanName();
+            }, $breadcrumb);
+            $breadcrumb = implode($separator, $breadcrumb);
+        }
+
+        return $breadcrumb;
     }
 
     /**
@@ -201,7 +210,8 @@ class Harvest
         $headers = $this->response->getHeaders();
         $headers = array_change_key_case(null !== $headers ? $headers : []);
         $redirUrl = isset($headers['location']) ? $headers['location'] : null;
-        if (null !== $redirUrl && ($httpsUrl = preg_replace('#^http://#', 'https://', $this->url, 1)) == $redirUrl) {
+        $url = $this->response->getUrl();
+        if (null !== $redirUrl && ($httpsUrl = preg_replace('#^http:#', 'https:', $url, 1)) == $redirUrl) {
             return $httpsUrl;
         }
 

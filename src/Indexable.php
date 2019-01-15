@@ -65,11 +65,11 @@ class Indexable
             return self::NOT_INDEXABLE_ROBOTS;
         }
 
-        if ($self->headersAllow()) {
+        if (!$self->headersAllow()) {
             return self::NOT_INDEXABLE_HEADER;
         }
 
-        if ($self->metaAllows()) {
+        if (!$self->metaAllows()) {
             return self::NOT_INDEXABLE_META;
         }
 
