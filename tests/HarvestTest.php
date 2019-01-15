@@ -40,6 +40,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue('https://piedweb.com/a-propos' == $harvest->getCanonical());
         $this->assertTrue(!$harvest->isCanonicalCorrect());
         $this->assertTrue($harvest->getRatioTxtCode() > 2);
+        var_dump($harvest->getKws());
         $this->assertTrue(is_array($harvest->getKws()));
 
         $this->assertTrue(strlen($harvest->getUniqueTag('head title')) > 10);

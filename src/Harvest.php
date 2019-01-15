@@ -158,6 +158,7 @@ class Harvest
 
     public function getKws()
     {
+        var_dump($this->response->getContent());
         $kws = TextAnalyzer::get(
             $this->response->getContent(),
             true,   // only sentences
@@ -182,7 +183,7 @@ class Harvest
     /**
      * Return an array of object with two elements Link and anchor.
      *
-     * @return array or NULL if we didn't found breadcrumb
+     * @return array|NULL if we didn't found breadcrumb
      */
     public function getBreadCrumb(?string $separator = null)
     {
