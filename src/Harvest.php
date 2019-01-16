@@ -286,7 +286,7 @@ class Harvest
     }
 
     /**
-     * @param RobotsTxt|string (empty)
+     * @param RobotsTxt|string $robotsTxt
      *
      * @return self
      */
