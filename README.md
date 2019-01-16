@@ -56,6 +56,9 @@ Harvest::fromUrl($url)
 
     ->getDomain()
     ->getBaseUrl()
+
+    ->getRobotsTxt() // @return \Spatie\Robots\RobotsTxt or empty string
+    ->setRobotsTxt($content) // @param string or RobotsTxt
 ```
 
 All others methods:

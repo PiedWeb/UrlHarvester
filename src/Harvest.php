@@ -40,9 +40,12 @@ class Harvest
     /** @var string */
     private $domainWithScheme;
 
+    /**
+     * @return self|int
+     */
     public static function fromUrl(
         string $url,
-        string $userAgent = 'Bot: Url Harvester',
+        string $userAgent = 'SeoPocketCrawler - Open Source Bot for SEO Metrics',
         string $language = 'en,en-US;q=0.5'
     ) {
         $response = Request::make($url, $userAgent, '200;html', $language);
@@ -276,6 +279,18 @@ class Harvest
         }
 
         return $this->robotsTxt;
+    }
+
+    /**
+     * @param RobotsTxt|string (empty)
+     *
+     * @return self
+     */
+    public function setRobotsTxt($robotsTxt)
+    {
+        $this->robotsTxt = is_string($robotsTxt) ? (empty($robotsTxt) ? '' : new RobotsTxt($robotsTxt)) : $robotsTxt;
+
+        return $this;
     }
 
     public function getDomainAndScheme()

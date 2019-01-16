@@ -97,6 +97,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertSame(Indexable::NOT_INDEXABLE_ROBOTS, $harvest->isIndexable());
+        $harvest->setRobotsTxt($harvest->getRobotsTxt());
 
         $indexable = new Indexable($this->getHarvest());
         $this->assertTrue($indexable->metaAllows());
