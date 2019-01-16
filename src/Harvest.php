@@ -266,7 +266,7 @@ class Harvest
             $request = new CurlRequest($url);
             $request
                 ->setDefaultSpeedOptions()
-                ->setDownloadOnly('0-500')
+                ->setDownloadOnly('0-500000')
                 ->setUserAgent($this->getResponse()->getRequest()->getUserAgent())
             ;
             $result = $request->exec();
