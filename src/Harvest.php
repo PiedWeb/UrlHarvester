@@ -162,7 +162,7 @@ class Harvest
     public function getKws()
     {
         $kws = TextAnalyzer::get(
-            $this->response->getContent(),
+            $this->getDom(),
             true,   // only sentences
             1,      // no expression, just words
             0      // keep trail
@@ -266,16 +266,19 @@ class Harvest
             $request = new CurlRequest($url);
             $request
                 ->setDefaultSpeedOptions()
-                ->setDownloadOnlyIf(function ($line) {
-                    return 0 === stripos(trim($line), 'content-type') && false !== stripos($line, 'text/plain');
-                })
+                ->setDownloadOnly('0-500')
                 ->setUserAgent($this->getResponse()->getRequest()->getUserAgent())
             ;
             $result = $request->exec();
 
-            $noNeedToParse = !$result instanceof \PiedWeb\Curl\Response || empty(trim($result->getContent()));
-
-            $this->robotsTxt = $noNeedToParse ? '' : new RobotsTxt($result->getContent());
+            if (!$result instanceof \PiedWeb\Curl\Response
+                || false === stripos($result->getContentType(), 'text/plain')
+                || empty(trim($result->getContent()))
+            ) {
+                $this->robotsTxt = '';
+            } else {
+                $this->robotsTxt = new RobotsTxt($result->getContent());
+            }
         }
 
         return $this->robotsTxt;

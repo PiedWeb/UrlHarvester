@@ -86,7 +86,7 @@ class Request
      */
     private function prepareHeadersForRequest()
     {
-        $host = parse_url($this->url, PHP_URL_HOST);
+        //$host = parse_url($this->url, PHP_URL_HOST);
 
         $headers = [];
         $headers[] = 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8';
@@ -94,9 +94,9 @@ class Request
         $headers[] = 'Accept-Language: '.$this->language;
         $headers[] = 'Connection: keep-alive';
 
-        if ($host) {
+        //if ($host) {
             //$headers[] =  'Host: '.$host;
-        }
+        //}
         // Referer
 
         $headers[] = 'Upgrade-Insecure-Requests: 1';
@@ -122,9 +122,10 @@ class Request
             ->setOpt(CURLOPT_FOLLOWLOCATION, false)
             ->setOpt(CURLOPT_COOKIE, false)
             ->setOpt(CURLOPT_CONNECTTIMEOUT, 20)
-            ->setOpt(CURLOPT_TIMEOUT, 80);
+            ->setOpt(CURLOPT_TIMEOUT, 80)
+            ->setAbortIfTooBig(200000); // 2Mo
 
-        $this->setDownloadOnly();
+        //$this->setDownloadOnly(); slow slow slow
 
         if ($this->proxy) {
             $this->request->setProxy($this->proxy);
