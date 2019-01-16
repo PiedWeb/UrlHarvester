@@ -113,8 +113,9 @@ class Request
      */
     private function request(?CurlRequest $request = null)
     {
-        $this->request = $request !== null ? $request : new CurlRequest($this->url);
+        $this->request = $request !== null ? $request : new CurlRequest();
         $this->request
+            ->setUrl($this->url)
             ->setReturnHeader()
             ->setEncodingGzip()
             ->setUserAgent($this->userAgent)
