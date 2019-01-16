@@ -6,12 +6,11 @@ use PiedWeb\Curl\Response;
 use PiedWeb\TextAnalyzer\Analyzer as TextAnalyzer;
 use phpuri;
 use simple_html_dom;
-use Spatie\Robots\RobotsTxt;
 use PiedWeb\Curl\Request as CurlRequest;
 
 class Harvest
 {
-    use HarvestLinksTrait;
+    use HarvestLinksTrait, RobotsTxtTrait;
 
     const LINK_SELF = 1;
     const LINK_INTERNAL = 2;
@@ -33,9 +32,6 @@ class Harvest
 
     /** @var string */
     protected $domain;
-
-    /** @var RobotsTxt|string (empty string) */
-    protected $robotsTxt;
 
     /** @var string */
     private $domainWithScheme;
@@ -253,48 +249,6 @@ class Harvest
     public function isIndexable(string $userAgent = 'googlebot')
     {
         return Indexable::isIndexable($this, $userAgent);
-    }
-
-    /**
-     * @return RobotsTxt|string containing the current Robots.txt or NULL if an error occured
-     *                          or empty string if robots is empty file
-     */
-    public function getRobotsTxt()
-    {
-        if (null === $this->robotsTxt) {
-            $url = $this->getDomainAndScheme().'/robots.txt';
-
-            $request = new CurlRequest($url);
-            $request
-                ->setDefaultSpeedOptions()
-                ->setDownloadOnly('0-500000')
-                ->setUserAgent($this->getResponse()->getRequest()->getUserAgent())
-            ;
-            $result = $request->exec();
-
-            if (!$result instanceof \PiedWeb\Curl\Response
-                || false === stripos($result->getContentType(), 'text/plain')
-                || empty(trim($result->getContent()))
-            ) {
-                $this->robotsTxt = '';
-            } else {
-                $this->robotsTxt = new RobotsTxt($result->getContent());
-            }
-        }
-
-        return $this->robotsTxt;
-    }
-
-    /**
-     * @param RobotsTxt|string $robotsTxt
-     *
-     * @return self
-     */
-    public function setRobotsTxt($robotsTxt)
-    {
-        $this->robotsTxt = is_string($robotsTxt) ? (empty($robotsTxt) ? '' : new RobotsTxt($robotsTxt)) : $robotsTxt;
-
-        return $this;
     }
 
     public function getDomainAndScheme()

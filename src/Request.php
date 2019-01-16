@@ -98,7 +98,7 @@ class Request
         $headers[] = 'Connection: keep-alive';
 
         //if ($host) {
-            //$headers[] =  'Host: '.$host;
+        //$headers[] =  'Host: '.$host;
         //}
         // Referer
 
@@ -113,7 +113,7 @@ class Request
      */
     private function request(?CurlRequest $request = null)
     {
-        $this->request = $request !== null ? $request : new CurlRequest();
+        $this->request = null !== $request ? $request : new CurlRequest();
         $this->request
             ->setUrl($this->url)
             ->setReturnHeader()
