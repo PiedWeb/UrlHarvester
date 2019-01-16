@@ -31,11 +31,6 @@ class Request
     private $proxy;
 
     /**
-     * @var string
-     */
-    private $downloadOnly;
-
-    /**
      * @var CurlRequest
      */
     private $request;
@@ -56,18 +51,26 @@ class Request
     public static function make(
         string  $url,
         string  $userAgent,
-        $downloadOnly = '200;html',
+        string  $language = 'en,en-US;q=0.5',
+        ?string $proxy = null
+    ) {
+        return self::makeFromRequest(null, $url, $userAgent, $language, $proxy);
+    }
+
+    public static function makeFromRequest(
+        ?CurlRequest $curlRequest = null,
+        string  $url,
+        string  $userAgent,
         string  $language = 'en,en-US;q=0.5',
         ?string $proxy = null
     ) {
         $request = new Request($url);
 
         $request->userAgent = $userAgent;
-        $request->downloadOnly = $downloadOnly;
         $request->language = $language;
         $request->proxy = $proxy;
 
-        return $request->request();
+        return $request->request($curlRequest);
     }
 
     private function __construct($url)
@@ -108,9 +111,9 @@ class Request
     /**
      * @return Response|int corresponding to the curl error
      */
-    private function request()
+    private function request(?CurlRequest $request = null)
     {
-        $this->request = new CurlRequest($this->url);
+        $this->request = $request !== null ? $request : new CurlRequest($this->url);
         $this->request
             ->setReturnHeader()
             ->setEncodingGzip()
@@ -125,8 +128,6 @@ class Request
             ->setOpt(CURLOPT_TIMEOUT, 80)
             ->setAbortIfTooBig(200000); // 2Mo
 
-        //$this->setDownloadOnly(); slow slow slow
-
         if ($this->proxy) {
             $this->request->setProxy($this->proxy);
         }
@@ -136,17 +137,5 @@ class Request
         $this->response = $this->request->exec();
 
         return $this->response;
-    }
-
-    protected function setDownloadOnly()
-    {
-        if ($this->downloadOnly) {
-            if ('200;html' == $this->downloadOnly) {
-                $download = new \PiedWeb\Curl\MultipleCheckInHeaders();
-                $this->request->setDownloadOnlyIf([$download, 'check']);
-            } elseif (is_callable($this->downloadOnly)) {
-                $this->request->setDownloadOnlyIf($this->downloadOnly);
-            }
-        }
     }
 }

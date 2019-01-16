@@ -46,9 +46,10 @@ class Harvest
     public static function fromUrl(
         string $url,
         string $userAgent = 'SeoPocketCrawler - Open Source Bot for SEO Metrics',
-        string $language = 'en,en-US;q=0.5'
+        string $language = 'en,en-US;q=0.5',
+        ?CurlRequest $previousRequest = null
     ) {
-        $response = Request::make($url, $userAgent, '200;html', $language);
+        $response = Request::makeFromRequest($previousRequest, $url, $userAgent, $language);
 
         if ($response instanceof Response) {
             return new self($response);

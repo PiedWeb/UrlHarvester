@@ -67,7 +67,8 @@ use \PiedWeb\UrlHarvester\Request;
 use \PiedWeb\UrlHarvester\ExtractLinks;
 use \PiedWeb\UrlHarvester\ExtractBreadcrumb;
 
-Request::make(string $url, string $userAgent, $donwloadOnly = 'text/html', string $language = 'en-US,en;q=0.5', ?string $proxy = null)
+Request::make(string $url, string $userAgent, string $language = 'en-US,en;q=0.5', ?string $proxy = null)
+Request::makeFromRequest(?CurlRequest $request = null, ...
 // @return \PiedWeb\Curl\Response or int curl error
 
 

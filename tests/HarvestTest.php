@@ -103,4 +103,18 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($indexable->metaAllows());
         $this->assertTrue($indexable->headersAllow());
     }
+
+    public function testHarvestWithPreviousRequest()
+    {
+        $harvest = $this->getHarvest();
+
+        $newHarvest = Harvest::fromUrl(
+            $this->getUrl(),
+            'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0',
+            'fr',
+            $harvest->getResponse()->getRequest()
+        );
+
+        $this->assertTrue(strlen($harvest->getUniqueTag('head title')) > 10);
+    }
 }
