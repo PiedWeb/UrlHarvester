@@ -13,7 +13,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
     private function getUrl()
     {
-        return 'https://www.piedweb.com/a-propos';
+        return 'https://piedweb.com/a-propos';
     }
 
     private function getHarvest()
@@ -38,7 +38,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(strlen($harvest->getTag('h1')) > 2);
         $this->assertTrue(strlen($harvest->getMeta('description')) > 2);
         $this->assertTrue('https://piedweb.com/a-propos' == $harvest->getCanonical());
-        $this->assertTrue(!$harvest->isCanonicalCorrect());
+        $this->assertTrue($harvest->isCanonicalCorrect());
         $this->assertTrue($harvest->getRatioTxtCode() > 2);
         $this->assertTrue(is_array($harvest->getKws()));
 
@@ -47,7 +47,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($harvest->getBreadCrumb()));
 
         $this->assertSame('piedweb.com', $harvest->getDomain());
-        $this->assertSame('https://www.piedweb.com/a-propos', $harvest->getBaseUrl());
+        $this->assertSame('https://piedweb.com/a-propos', $harvest->getBaseUrl());
     }
 
     public function testHarvestLinks()
