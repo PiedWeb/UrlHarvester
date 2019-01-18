@@ -17,6 +17,8 @@ class Harvest
     const LINK_SUB = 3;
     const LINK_EXTERNAL = 4;
 
+    const DEFAULT_USER_AGENT = 'SeoPocketCrawler - Open Source Bot for SEO Metrics';
+
     /**
      * @var Response
      */
@@ -41,7 +43,7 @@ class Harvest
      */
     public static function fromUrl(
         string $url,
-        string $userAgent = 'SeoPocketCrawler - Open Source Bot for SEO Metrics',
+        string $userAgent = self::DEFAULT_USER_AGENT,
         string $language = 'en,en-US;q=0.5',
         ?CurlRequest $previousRequest = null
     ) {

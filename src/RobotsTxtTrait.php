@@ -10,6 +10,10 @@ trait RobotsTxtTrait
     /** @var RobotsTxt|string (empty string) */
     protected $robotsTxt;
 
+    abstract public function getDomainAndScheme();
+
+    abstract public function getResponse();
+
     /**
      * @return RobotsTxt|string containing the current Robots.txt or NULL if an error occured
      *                          or empty string if robots is empty file
@@ -19,11 +23,14 @@ trait RobotsTxtTrait
         if (null === $this->robotsTxt) {
             $url = $this->getDomainAndScheme().'/robots.txt';
 
+            $request = $this->getResponse()->getRequest();
+            $userAgent = $request ? $request->getUserAgent() : self::DEFAULT_USER_AGENT;
+
             $request = new CurlRequest($url);
             $request
                 ->setDefaultSpeedOptions()
                 ->setDownloadOnly('0-500000')
-                ->setUserAgent($this->getResponse()->getRequest()->getUserAgent())
+                ->setUserAgent($userAgent)
             ;
             $result = $request->exec();
 

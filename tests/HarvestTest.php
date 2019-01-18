@@ -6,6 +6,7 @@ namespace PiedWeb\UrlHarvester\Test;
 
 use PiedWeb\UrlHarvester\Harvest;
 use PiedWeb\UrlHarvester\Indexable;
+use PiedWeb\Curl\ResponseFromCache;
 
 class HarvestTest extends \PHPUnit\Framework\TestCase
 {
@@ -116,5 +117,16 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertTrue(strlen($harvest->getUniqueTag('head title')) > 10);
+    }
+
+    public function testHarvestFromCache()
+    {
+        $harvest = new Harvest(new ResponseFromCache(
+            'HTTP/1.1 200 OK'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html><body><p>Tests</p></body>',
+            'https://piedweb.com/',
+            ['content_type' => 'text/html; charset=UTF-8']
+        ));
+
+        $this->assertSame(0, $harvest->isIndexable());
     }
 }
