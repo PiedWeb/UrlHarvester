@@ -24,7 +24,7 @@ trait RobotsTxtTrait
             $url = $this->getDomainAndScheme().'/robots.txt';
 
             $request = $this->getResponse()->getRequest();
-            $userAgent = $request ? $request->getUserAgent() : self::DEFAULT_USER_AGENT;
+            $userAgent = $request ? $request->getUserAgent() : Harvest::DEFAULT_USER_AGENT;
 
             $request = new CurlRequest($url);
             $request

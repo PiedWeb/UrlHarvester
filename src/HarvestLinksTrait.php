@@ -82,7 +82,7 @@ trait HarvestLinksTrait
         return $this->isInternalType($url) && $url == $this->response->getEffectiveUrl();
     }
 
-    public function getType(string $url): string
+    public function getType(string $url)
     {
         if ($this->isSelfType($url)) {
             return Harvest::LINK_SELF;
