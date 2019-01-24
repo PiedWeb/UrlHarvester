@@ -65,11 +65,17 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($harvest->getLinks(Harvest::LINK_EXTERNAL)));
         $this->assertTrue(is_int($harvest->getNbrDuplicateLinks()));
         $this->assertSame('/a-propos', $harvest->getAbsoluteInternalLink($this->getUrl()));
-
-        $this->assertTrue($harvest->getLinks()[0]->follow());
     }
 
-    public function testNofollowLink()
+    public function testFollow()
+    {
+        $harvest = $this->getHarvest();
+
+        $this->assertTrue($harvest->getLinks()[0]->mayFollow());
+        $this->assertTrue($harvest->mayFollow());
+    }
+
+    public function testNofollow()
     {
         $html = '<a href="#" rel=nofollow>test</a>';
         $dom = new \simple_html_dom();
@@ -77,7 +83,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
         $link = new Link('#', $dom->find('a', 0));
 
-        $this->assertTrue(!$link->follow());
+        $this->assertTrue(! $link->mayFollow());
     }
 
     public function testRedirection()

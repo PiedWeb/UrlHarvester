@@ -44,7 +44,7 @@ class Link
         return $this->element;
     }
 
-    public function follow()
+    public function mayFollow()
     {
         if (isset($this->element->rel)) {
             if (strpos($this->element->rel, 'nofollow') !== false) {

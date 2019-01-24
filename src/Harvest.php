@@ -7,6 +7,7 @@ use PiedWeb\TextAnalyzer\Analyzer as TextAnalyzer;
 use phpuri;
 use simple_html_dom;
 use PiedWeb\Curl\Request as CurlRequest;
+use Spatie\Robots\RobotsHeaders;
 
 class Harvest
 {
@@ -34,6 +35,9 @@ class Harvest
 
     /** @var string */
     protected $domain;
+
+    /** @var bool */
+    protected $follow;
 
     /** @var string */
     private $domainWithScheme;
@@ -277,5 +281,20 @@ class Harvest
         $url = parse_url($url);
 
         return $url['scheme'].'://'.$url['host'];
+    }
+
+    protected function metaAuthorizeToFollow()
+    {
+        return ! (strpos($this->getMeta('googlebot'), 'nofollow') || strpos($this->getMeta('robots'), 'nofollow'));
+    }
+
+    public function mayFollow()
+    {
+        if ($this->follow === null) {
+            $robotsHeaders = new RobotsHeaders($this->response->getHeaders());
+            $this->follow = $robotsHeaders->mayFollow() && $this->metaAuthorizeToFollow() ? true : false;
+        }
+
+        return $this->follow;
     }
 }
