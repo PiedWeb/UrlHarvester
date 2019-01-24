@@ -19,7 +19,7 @@ trait HarvestLinksTrait
         return ExtractLinks::get($this->getDom(), $this->response->getEffectiveUrl(), ExtractLinks::SELECT_ALL);
     }
 
-    public function getLinks($type = null)
+    public function getLinks($type = null): array
     {
         if (null === $this->links) {
             $this->links = ExtractLinks::get($this->getDom(), $this->response->getEffectiveUrl());

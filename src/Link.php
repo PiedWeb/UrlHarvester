@@ -2,20 +2,24 @@
 
 namespace PiedWeb\UrlHarvester;
 
+use simple_html_dom_node;
+
 class Link
 {
     private $url;
     private $anchor;
     private $element;
 
-    public function __construct(string $url, $element)
+    public function __construct(string $url, ?simple_html_dom_node $element = null)
     {
         $this->url = trim($url);
-        $this->setAnchor($element);
+        if (null !== $element) {
+            $this->setAnchor($element);
+        }
         $this->element = $element;
     }
 
-    protected function setAnchor($element)
+    protected function setAnchor(simple_html_dom_node $element)
     {
         $this->anchor = substr(Helper::clean($element->plaintext), 0, 100);
 
@@ -46,8 +50,8 @@ class Link
 
     public function mayFollow()
     {
-        if (isset($this->element->rel)) {
-            if (strpos($this->element->rel, 'nofollow') !== false) {
+        if (isset($this->element) && isset($this->element->rel)) {
+            if (false !== strpos($this->element->rel, 'nofollow')) {
                 return false;
             }
         }

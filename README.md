@@ -54,6 +54,7 @@ Harvest::fromUrl($url)
     ->getLinks(Harvest::LINK_SUB)
     ->getLinks(Harvest::LINK_EXTERNAL)
     ->getLinkedRessources() // Return an array with all attributes containing a href or a src property
+    ->mayFollow() // check headers and meta and return bool
 
     ->getDomain()
     ->getBaseUrl()

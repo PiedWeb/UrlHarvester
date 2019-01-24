@@ -285,12 +285,12 @@ class Harvest
 
     protected function metaAuthorizeToFollow()
     {
-        return ! (strpos($this->getMeta('googlebot'), 'nofollow') || strpos($this->getMeta('robots'), 'nofollow'));
+        return !(strpos($this->getMeta('googlebot'), 'nofollow') || strpos($this->getMeta('robots'), 'nofollow'));
     }
 
     public function mayFollow()
     {
-        if ($this->follow === null) {
+        if (null === $this->follow) {
             $robotsHeaders = new RobotsHeaders($this->response->getHeaders());
             $this->follow = $robotsHeaders->mayFollow() && $this->metaAuthorizeToFollow() ? true : false;
         }
