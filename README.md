@@ -43,6 +43,7 @@ Harvest::fromUrl($url)
     ->getCanonical() // @return string|NULL
     ->isCanonicalCorrect() // @return bool
     ->getRatioTxtCode() // @return int
+    ->getTextAnalysis() // @return \PiedWeb\TextAnalyzer\Analysis
     ->getKws() // @return 10 more used words
     ->getBreadCrumb()
     ->isIndexable($userAgent = 'googlebot') // @return int corresponding to a const from Indexable
