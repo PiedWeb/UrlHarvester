@@ -43,4 +43,15 @@ class Link
     {
         return $this->element;
     }
+
+    public function follow()
+    {
+        if (isset($this->element->rel)) {
+            if (strpos($this->element->rel, 'nofollow') !== false) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

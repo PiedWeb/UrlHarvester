@@ -6,6 +6,7 @@ namespace PiedWeb\UrlHarvester\Test;
 
 use PiedWeb\UrlHarvester\Harvest;
 use PiedWeb\UrlHarvester\Indexable;
+use PiedWeb\UrlHarvester\Link;
 use PiedWeb\Curl\ResponseFromCache;
 
 class HarvestTest extends \PHPUnit\Framework\TestCase
@@ -64,6 +65,19 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($harvest->getLinks(Harvest::LINK_EXTERNAL)));
         $this->assertTrue(is_int($harvest->getNbrDuplicateLinks()));
         $this->assertSame('/a-propos', $harvest->getAbsoluteInternalLink($this->getUrl()));
+
+        $this->assertTrue($harvest->getLinks()[0]->follow());
+    }
+
+    public function testNofollowLink()
+    {
+        $html = '<a href="#" rel=nofollow>test</a>';
+        $dom = new \simple_html_dom();
+        $dom->load($html);
+
+        $link = new Link('#', $dom->find('a', 0));
+
+        $this->assertTrue(!$link->follow());
     }
 
     public function testRedirection()
