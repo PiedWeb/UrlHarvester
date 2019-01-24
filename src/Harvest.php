@@ -38,6 +38,9 @@ class Harvest
     /** @var string */
     private $domainWithScheme;
 
+    /** @var \PiedWeb\TextAnalyzer\Analysis */
+    private $textAnalysis;
+
     /**
      * @return self|int
      */
@@ -158,16 +161,23 @@ class Harvest
         return $canonical ? $this->response->getEffectiveUrl() == $canonical : true;
     }
 
+    public function getTextAnalysis()
+    {
+        if (null === $this->textAnalysis) {
+            $this->textAnalysis = TextAnalyzer::get(
+                $this->getDom(),
+                true,   // only sentences
+                1,      // no expression, just words
+                0      // keep trail
+            );
+        }
+
+        return $this->textAnalysis;
+    }
+
     public function getKws()
     {
-        $kws = TextAnalyzer::get(
-            $this->getDom(),
-            true,   // only sentences
-            1,      // no expression, just words
-            0      // keep trail
-        );
-
-        return $kws->getExpressions(10);
+        return $this->getTextAnalysis()->getExpressions(10);
     }
 
     /**
