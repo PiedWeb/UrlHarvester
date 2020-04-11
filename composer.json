@@ -21,7 +21,7 @@
         }
     ],
     "require": {
-        "php" : "~7.1",
+        "php" : "~7.3",
         "pguardiario/phpuri": "^1.0",
         "neitanod/forceutf8": "^2.0",
         "piedweb/text-analyzer": "^0.0",
