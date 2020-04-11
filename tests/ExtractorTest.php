@@ -8,6 +8,7 @@ use PiedWeb\UrlHarvester\Request;
 use PiedWeb\UrlHarvester\Helper;
 use PiedWeb\UrlHarvester\ExtractLinks;
 use PiedWeb\UrlHarvester\ExtractBreadcrumb;
+use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 class ExtractorTest extends \PHPUnit\Framework\TestCase
 {
@@ -15,7 +16,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
 
     private function getUrl()
     {
-        return 'https://piedweb.com/a-propos';
+        return 'https://piedweb.com/seo/crawler';
     }
 
     private function getDom()
@@ -26,8 +27,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
                 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0'
             );
 
-            self::$dom = new \simple_html_dom();
-            self::$dom->load($request->getContent());
+            self::$dom = new DomCrawler($request->getContent());
         }
 
         return self::$dom;
@@ -56,7 +56,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
         foreach ($links as $link) {
             $this->assertTrue(strlen($link->getUrl()) > 10);
             $this->assertTrue(strlen($link->getAnchor()) > 1);
-            $this->assertTrue(strlen($link->getElement()->href) >= 1);
+            $this->assertTrue(strlen($link->getElement()->getAttribute('href')) >= 1);
             break;
         }
     }
@@ -64,7 +64,7 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
     public function testExtractBreadcrumb()
     {
         $dom = $this->getDom();
-        $bcItems = ExtractBreadcrumb::get($dom->save(), 'https://piedweb.com/', $this->getUrl());
+        $bcItems = ExtractBreadcrumb::get($dom->html(), 'https://piedweb.com/', $this->getUrl());
 
         foreach ($bcItems as $item) {
             $this->assertTrue(strlen($item->getUrl()) > 10);

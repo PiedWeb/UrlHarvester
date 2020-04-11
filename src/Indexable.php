@@ -79,6 +79,7 @@ class Indexable
         }
 
         $statusCode = $harvest->getResponse()->getStatusCode();
+
         // status 4XX
         if ($statusCode < 500 && $statusCode > 399) {
             return self::NOT_INDEXABLE_5XX;

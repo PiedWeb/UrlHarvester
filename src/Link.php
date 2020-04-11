@@ -1,8 +1,14 @@
 <?php
 
+/**
+ * Entity
+ */
+
 namespace PiedWeb\UrlHarvester;
 
 use simple_html_dom_node;
+
+use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 class Link
 {
@@ -10,7 +16,7 @@ class Link
     private $anchor;
     private $element;
 
-    public function __construct(string $url, ?simple_html_dom_node $element = null)
+    public function __construct(string $url, \DOMElement $element = null)
     {
         $this->url = trim($url);
         if (null !== $element) {
@@ -19,12 +25,17 @@ class Link
         $this->element = $element;
     }
 
-    protected function setAnchor(simple_html_dom_node $element)
+    protected function setAnchor(\DomElement $element)
     {
-        $this->anchor = substr(Helper::clean($element->plaintext), 0, 100);
+        // Get classic text anchor
+        $this->anchor = substr(Helper::clean($element->textContent), 0, 100);
 
-        if (empty($this->anchor) && $element->find('*[alt]', 0)) {
-            $this->anchor = substr(Helper::clean($element->find('*[alt]', 0)->alt), 0, 100);
+        // If get nothing, then maybe we can get an alternative text (eg: img)
+        if (empty($this->anchor)) {
+            $alt = (new DomCrawler($element))->filter('*[alt]');
+            if ($alt->count() > 0) {
+                $this->anchor = substr(Helper::clean($alt->eq(0)->attr('alt'), 0, 100));
+            }
         }
     }
 
@@ -50,8 +61,8 @@ class Link
 
     public function mayFollow()
     {
-        if (isset($this->element) && isset($this->element->rel)) {
-            if (false !== strpos($this->element->rel, 'nofollow')) {
+        if (isset($this->element) && null !== $this->element->getAttribute('rel')) {
+            if (false !== strpos($this->element->getAttribute('rel'), 'nofollow')) {
                 return false;
             }
         }

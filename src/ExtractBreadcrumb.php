@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Entity
+ */
+
 namespace PiedWeb\UrlHarvester;
 
 use phpUri;

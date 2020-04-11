@@ -3,6 +3,7 @@
 namespace PiedWeb\UrlHarvester;
 
 use phpUri;
+use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 class ExtractLinks
 {
@@ -32,7 +33,7 @@ class ExtractLinks
      *
      * @return array
      */
-    public static function get(\simple_html_dom $dom, string $baseUrl, $selector = self::SELECT_A)
+    public static function get(DomCrawler $dom, string $baseUrl, $selector = self::SELECT_A)
     {
         $self = new self();
 
@@ -71,23 +72,23 @@ class ExtractLinks
     private function getElements()
     {
         if (self::SELECT_A == $this->selector) {
-            return $this->dom->find($this->selector);
+            return $this->dom->filter($this->selector);
         } else {
-            return $this->dom->find('['.implode('],*[', explode(',', $this->selector)).']');
+            return $this->dom->filter('['.implode('],*[', explode(',', $this->selector)).']');
         }
     }
 
     /**
      * @return string|null
      */
-    private function getUrl($element)
+    private function getUrl(\DomElement $element)
     {
         if (self::SELECT_A == $this->selector) {
-            $href = $element->href;
+            $href = $element->getAttribute('href');
         } else {
             $attributes = explode(',', $this->selector);
             foreach ($attributes as $attribute) {
-                $href = $element->$attribute;
+                $href = $element->getAttribute($attribute);
                 if (null !== $href) {
                     break;
                 }
@@ -101,10 +102,8 @@ class ExtractLinks
         return $href;
     }
 
-    private function isItALink($href)
+    private function isItALink(string $href)
     {
-        return
-            0 !== stripos($href, 'mailto:')
-            && 0 !== strpos($href, 'javascript:');
+        return preg_match('@^(((http|https|ftp)://([\w\d-]+\.)+[\w\d-]+){0,1}(/?[\w~,;\-\./?%&+#=]*))$@', $href);
     }
 }

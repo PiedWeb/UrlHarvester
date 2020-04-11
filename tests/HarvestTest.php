@@ -8,6 +8,7 @@ use PiedWeb\UrlHarvester\Harvest;
 use PiedWeb\UrlHarvester\Indexable;
 use PiedWeb\UrlHarvester\Link;
 use PiedWeb\Curl\ResponseFromCache;
+use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 class HarvestTest extends \PHPUnit\Framework\TestCase
 {
@@ -15,7 +16,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
     private function getUrl()
     {
-        return 'https://piedweb.com/a-propos';
+        return 'https://piedweb.com/seo/crawler';
     }
 
     private function getHarvest()
@@ -39,7 +40,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($harvest->getResponse()->getInfo('total_time') > 0.00000001);
         $this->assertTrue(strlen($harvest->getTag('h1')) > 2);
         $this->assertTrue(strlen($harvest->getMeta('description')) > 2);
-        $this->assertTrue('https://piedweb.com/a-propos' == $harvest->getCanonical());
+        $this->assertTrue('https://piedweb.com/seo/crawler' == $harvest->getCanonical());
         $this->assertTrue($harvest->isCanonicalCorrect());
         $this->assertTrue($harvest->getRatioTxtCode() > 2);
         $this->assertTrue(is_array($harvest->getKws()));
@@ -49,7 +50,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($harvest->getBreadCrumb()));
 
         $this->assertSame('piedweb.com', $harvest->getDomain());
-        $this->assertSame('https://piedweb.com/a-propos', $harvest->getBaseUrl());
+        $this->assertSame('https://piedweb.com/seo/crawler', $harvest->getBaseUrl());
     }
 
     public function testHarvestLinks()
@@ -64,7 +65,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($harvest->getLinks(Harvest::LINK_SUB)));
         $this->assertTrue(is_array($harvest->getLinks(Harvest::LINK_EXTERNAL)));
         $this->assertTrue(is_int($harvest->getNbrDuplicateLinks()));
-        $this->assertSame('/a-propos', $harvest->getAbsoluteInternalLink($this->getUrl()));
+        $this->assertSame('/seo/crawler', $harvest->getAbsoluteInternalLink($this->getUrl()));
     }
 
     public function testFollow()
@@ -77,11 +78,10 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
     public function testNofollow()
     {
-        $html = '<a href="#" rel=nofollow>test</a>';
-        $dom = new \simple_html_dom();
-        $dom->load($html);
+        $html = '<a href="/test" rel=nofollow>test</a>';
+        $dom = new DomCrawler($html);
 
-        $link = new Link('#', $dom->find('a', 0));
+        $link = new Link('/test', $dom->filter('a')->getNode(0));
 
         $this->assertTrue(! $link->mayFollow());
     }

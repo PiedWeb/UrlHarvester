@@ -6,6 +6,7 @@ use PiedWeb\Curl\Response;
 use PiedWeb\TextAnalyzer\Analyzer as TextAnalyzer;
 use phpuri;
 use simple_html_dom;
+use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 use PiedWeb\Curl\Request as CurlRequest;
 use Spatie\Robots\RobotsHeaders;
 
@@ -90,18 +91,29 @@ class Harvest
     public function getDom()
     {
         if (null === $this->dom) {
-            $this->dom = new simple_html_dom();
-            $this->dom->load($this->response->getContent());
+            $this->dom = new DomCrawler($this->response->getContent());
         }
 
         return $this->dom;
     }
 
+    /**
+     * @return DomCrawler
+     */
     private function find($selector, $number = null)
     {
-        return $this->getDom()->find($selector, $number);
+        if ($number !== null) {
+            return $this->getDom()->filter($selector)->eq($number);
+        }
+
+        return $this->getDom()->filter($selector);
     }
 
+    /**
+     * Alias for find($selector, 0)
+     *
+     * @return static
+     */
     private function findOne($selector)
     {
         return $this->find($selector, 0);
@@ -109,6 +121,7 @@ class Harvest
 
     /**
      * Return content inside a selector.
+     * Eg.: getTag('title')
      *
      * @return string
      */
@@ -116,31 +129,29 @@ class Harvest
     {
         $found = $this->findOne($selector);
 
-        return null !== $found ? Helper::clean($found->innertext) : null;
+        return null !== $found ? Helper::clean($found->text()) : null;
     }
 
     public function getUniqueTag($selector = 'title')
     {
         $found = $this->find($selector);
-        if ($found) {
-            if (count($found) > 1) {
-                return count($found).' `'.$selector.'` !!';
-            } else {
-                return Helper::clean($found[0]->innertext);
-            }
+        if ($found->count() > 1) {
+            return $found->count().' `'.$selector.'` /!\ ';
+        } else {
+            return Helper::clean($found->eq(0)->text());
         }
     }
 
     /**
      * Return content inside a meta.
      *
-     * @return string from content attribute
+     * @return null|string from content attribute
      */
     public function getMeta(string $name)
     {
         $meta = $this->findOne('meta[name='.$name.']');
 
-        return null !== $meta ? (isset($meta->content) ? Helper::clean($meta->content) : '') : '';
+        return $meta->count() > 0 ? (null !== $meta->attr('content') ? Helper::clean($meta->attr('content')) : '') : null;
     }
 
     /**
@@ -152,7 +163,7 @@ class Harvest
     {
         $canonical = $this->findOne('link[rel=canonical]');
 
-        return null !== $canonical ? (isset($canonical->href) ? $canonical->href : '') : null;
+        return $canonical->count() > 0 ? (null !== $canonical->attr('href') ? $canonical->attr('href') : '') : null;
     }
 
     /*
@@ -169,7 +180,7 @@ class Harvest
     {
         if (null === $this->textAnalysis) {
             $this->textAnalysis = TextAnalyzer::get(
-                $this->getDom(),
+                $this->getDom()->text(),
                 true,   // only sentences
                 1,      // no expression, just words
                 0      // keep trail
@@ -189,7 +200,7 @@ class Harvest
      */
     public function getRatioTxtCode(): int
     {
-        $textLenght = strlen($this->getDom()->plaintext);
+        $textLenght = strlen($this->getDom()->text());
         $htmlLenght = strlen(Helper::clean($this->response->getContent()));
 
         return (int) ($htmlLenght > 0 ? round($textLenght / $htmlLenght * 100) : 0);
