@@ -2,17 +2,18 @@
 
 namespace PiedWeb\UrlHarvester;
 
+use phpuri;
+use PiedWeb\Curl\Request as CurlRequest;
 use PiedWeb\Curl\Response;
 use PiedWeb\TextAnalyzer\Analyzer as TextAnalyzer;
-use phpuri;
 use simple_html_dom;
-use Symfony\Component\DomCrawler\Crawler as DomCrawler;
-use PiedWeb\Curl\Request as CurlRequest;
 use Spatie\Robots\RobotsHeaders;
+use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 class Harvest
 {
-    use HarvestLinksTrait, RobotsTxtTrait;
+    use HarvestLinksTrait;
+    use RobotsTxtTrait;
 
     const LINK_SELF = 1;
     const LINK_INTERNAL = 2;
@@ -64,9 +65,6 @@ class Harvest
         return $response;
     }
 
-    /**
-     * @param Response $response
-     */
     public function __construct(Response $response)
     {
         $this->response = $response;
@@ -102,7 +100,7 @@ class Harvest
      */
     private function find($selector, $number = null)
     {
-        if ($number !== null) {
+        if (null !== $number) {
             return $this->getDom()->filter($selector)->eq($number);
         }
 
@@ -110,7 +108,7 @@ class Harvest
     }
 
     /**
-     * Alias for find($selector, 0)
+     * Alias for find($selector, 0).
      *
      * @return static
      */
@@ -121,7 +119,7 @@ class Harvest
 
     /**
      * Return content inside a selector.
-     * Eg.: getTag('title')
+     * Eg.: getTag('title').
      *
      * @return string
      */
@@ -145,7 +143,7 @@ class Harvest
     /**
      * Return content inside a meta.
      *
-     * @return null|string from content attribute
+     * @return string|null from content attribute
      */
     public function getMeta(string $name)
     {
@@ -195,9 +193,6 @@ class Harvest
         return $this->getTextAnalysis()->getExpressions(10);
     }
 
-    /**
-     * @return int
-     */
     public function getRatioTxtCode(): int
     {
         $textLenght = strlen($this->getDom()->text());

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity
+ * Entity.
  */
 
 namespace PiedWeb\UrlHarvester;

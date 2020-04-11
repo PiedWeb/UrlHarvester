@@ -41,17 +41,14 @@ class Request
     private $response;
 
     /**
-     * @param string $url
-     * @param string $userAgent
-     * @param string $language
-     * @param bool   $tryHttps
+     * @param bool $tryHttps
      *
      * @return Response|int corresponding to the curl error
      */
     public static function make(
-        string  $url,
-        string  $userAgent,
-        string  $language = 'en,en-US;q=0.5',
+        string $url,
+        string $userAgent,
+        string $language = 'en,en-US;q=0.5',
         ?string $proxy = null
     ) {
         return self::makeFromRequest(null, $url, $userAgent, $language, $proxy);
@@ -59,9 +56,9 @@ class Request
 
     public static function makeFromRequest(
         ?CurlRequest $curlRequest = null,
-        string  $url,
-        string  $userAgent,
-        string  $language = 'en,en-US;q=0.5',
+        string $url,
+        string $userAgent,
+        string $language = 'en,en-US;q=0.5',
         ?string $proxy = null
     ) {
         $request = new Request($url);

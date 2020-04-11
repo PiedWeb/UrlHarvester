@@ -2,8 +2,8 @@
 
 namespace PiedWeb\UrlHarvester;
 
-use Spatie\Robots\RobotsTxt;
 use PiedWeb\Curl\Request as CurlRequest;
+use Spatie\Robots\RobotsTxt;
 
 trait RobotsTxtTrait
 {

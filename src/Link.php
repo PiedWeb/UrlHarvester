@@ -1,12 +1,10 @@
 <?php
 
 /**
- * Entity
+ * Entity.
  */
 
 namespace PiedWeb\UrlHarvester;
-
-use simple_html_dom_node;
 
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
