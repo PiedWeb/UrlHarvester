@@ -6,7 +6,6 @@ use phpuri;
 use PiedWeb\Curl\Request as CurlRequest;
 use PiedWeb\Curl\Response;
 use PiedWeb\TextAnalyzer\Analyzer as TextAnalyzer;
-use simple_html_dom;
 use Spatie\Robots\RobotsHeaders;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
@@ -28,7 +27,7 @@ class Harvest
     protected $response;
 
     /**
-     * @var simple_html_dom
+     * @var \Symfony\Component\DomCrawler\Crawler
      */
     protected $dom;
 
@@ -110,7 +109,7 @@ class Harvest
     /**
      * Alias for find($selector, 0).
      *
-     * @return static
+     * @return DomCrawler
      */
     private function findOne($selector)
     {
@@ -133,11 +132,16 @@ class Harvest
     public function getUniqueTag($selector = 'title')
     {
         $found = $this->find($selector);
+
+        if ($found->count() === 0) {
+            return null;
+        }
+
         if ($found->count() > 1) {
             return $found->count().' `'.$selector.'` /!\ ';
-        } else {
-            return Helper::clean($found->eq(0)->text());
         }
+
+        return Helper::clean($found->eq(0)->text());
     }
 
     /**

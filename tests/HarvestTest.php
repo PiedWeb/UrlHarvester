@@ -47,6 +47,8 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
         $this->assertTrue(strlen($harvest->getUniqueTag('head title')) > 10);
 
+        $this->assertTrue(null === $harvest->getUniqueTag('h12'));
+
         $this->assertTrue(is_array($harvest->getBreadCrumb()));
 
         $this->assertSame('piedweb.com', $harvest->getDomain());

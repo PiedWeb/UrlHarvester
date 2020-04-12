@@ -26,15 +26,21 @@ class Link
     protected function setAnchor(\DomElement $element)
     {
         // Get classic text anchor
-        $this->anchor = substr(Helper::clean($element->textContent), 0, 100);
+        $this->anchor = $element->textContent;
 
         // If get nothing, then maybe we can get an alternative text (eg: img)
         if (empty($this->anchor)) {
             $alt = (new DomCrawler($element))->filter('*[alt]');
             if ($alt->count() > 0) {
-                $this->anchor = substr(Helper::clean($alt->eq(0)->attr('alt'), 0, 100));
+                $this->anchor = $alt->eq(0)->attr('alt') ?? '';
             }
         }
+
+        // Limit to 100 characters
+        // Totally subjective
+        $this->anchor = substr(Helper::clean($this->anchor), 0, 99);
+
+        return $this;
     }
 
     public function getUrl()
@@ -57,9 +63,12 @@ class Link
         return $this->element;
     }
 
+    /**
+     * @return bool
+     */
     public function mayFollow()
     {
-        if (isset($this->element) && null !== $this->element->getAttribute('rel')) {
+        if (null !== $this->element && null !== $this->element->getAttribute('rel')) {
             if (false !== strpos($this->element->getAttribute('rel'), 'nofollow')) {
                 return false;
             }

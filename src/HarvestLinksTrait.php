@@ -40,6 +40,12 @@ trait HarvestLinksTrait
         }
     }
 
+    /**
+     * Return duplicate links
+     * /test and /test#2 are not duplicates.
+     *
+     * @return int
+     */
     public function getNbrDuplicateLinks()
     {
         $links = $this->getLinks();

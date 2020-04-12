@@ -12,7 +12,7 @@ class ExtractLinks
     const SELECT_ALL = 'href,src';
 
     /**
-     * @var \simple_html_dom
+     * @var \Symfony\Component\DomCrawler\Crawler
      */
     private $dom;
 
@@ -56,7 +56,7 @@ class ExtractLinks
         $links = [];
         $elements = $this->getElements();
 
-        if ($elements) {
+        if (null !== $elements) {
             foreach ($elements as $element) {
                 $href = $this->getUrl($element);
 
