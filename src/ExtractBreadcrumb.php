@@ -6,18 +6,14 @@
 
 namespace PiedWeb\UrlHarvester;
 
-use phpUri;
-
 /**
  * Quelques notes :
  * - Un bc ne contient pas l'élément courant.
  */
 class ExtractBreadcrumb
 {
-    protected $source;
     protected $breadcrumb = [];
-    protected $baseUrl;
-    protected $currentUrl;
+    protected $parentDoc;
 
     const BC_RGX = '#<(div|p|nav|ul)[^>]*(id|class)="?(breadcrumbs?|fil_?d?arian?ne)"?[^>]*>(.*)<\/(\1)>#siU';
 
@@ -36,13 +32,11 @@ class ExtractBreadcrumb
      *
      * @return array|null
      */
-    public static function get(string $source, string $baseUrl, $current = null)
+    public static function get(Harvest $parent)
     {
         $self = new self();
 
-        $self->source = $source;
-        $self->baseUrl = $baseUrl;
-        $self->currentUrl = null === $current ? $baseUrl : $current;
+        $self->parentDoc = $parent;
 
         return $self->extractBreadcrumb();
     }
@@ -71,7 +65,7 @@ class ExtractBreadcrumb
 
     protected function findBreadcrumb()
     {
-        if (preg_match(self::BC_RGX, $this->source, $match)) {
+        if (preg_match(self::BC_RGX, $this->parentDoc->getResponse()->getContent(), $match)) {
             return $match[4];
         }
     }
@@ -90,7 +84,7 @@ class ExtractBreadcrumb
     {
         foreach ($array as $a) {
             $link = $this->extractHref($a);
-            if (null === $link || $link == $this->currentUrl) {
+            if (null === $link || $link == $this->parentDoc->getUrl()->get()) {
                 break;
             }
             $this->breadcrumb[] = new BreadcrumbItem(
@@ -114,7 +108,9 @@ class ExtractBreadcrumb
         ];
         foreach ($regex as $r) {
             if (preg_match('/'.$r.'/siU', $str, $match)) {
-                return phpUri::parse($this->baseUrl)->join($match[1]);
+                if (ExtractLinks::isWebLink($match[1])) {
+                    return $this->parentDoc->getUrl()->resolve($match[1]);
+                }
             }
         }
     }

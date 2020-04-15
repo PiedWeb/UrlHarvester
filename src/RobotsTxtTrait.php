@@ -10,7 +10,7 @@ trait RobotsTxtTrait
     /** @var RobotsTxt|string (empty string) */
     protected $robotsTxt;
 
-    abstract public function getDomainAndScheme();
+    //abstract public function getDomainAndScheme();
 
     abstract public function getResponse();
 
@@ -21,7 +21,7 @@ trait RobotsTxtTrait
     public function getRobotsTxt()
     {
         if (null === $this->robotsTxt) {
-            $url = $this->getDomainAndScheme().'/robots.txt';
+            $url = $this->url()->getOrigin().'/robots.txt';
 
             $request = $this->getResponse()->getRequest();
             $userAgent = $request ? $request->getUserAgent() : Harvest::DEFAULT_USER_AGENT;

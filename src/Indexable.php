@@ -53,10 +53,7 @@ class Indexable
         return RobotsHeaders::create($headers)->mayIndex($this->isIndexableFor);
     }
 
-    /**
-     * @return int
-     */
-    public static function isIndexable(Harvest $harvest, string $isIndexableFor = 'googlebot')
+    public static function isIndexable(Harvest $harvest, string $isIndexableFor = 'googlebot'): int
     {
         $self = new self($harvest, $isIndexableFor);
 

@@ -2,10 +2,10 @@
 
 namespace PiedWeb\UrlHarvester;
 
-use phpuri;
 use PiedWeb\Curl\Request as CurlRequest;
 use PiedWeb\Curl\Response;
 use PiedWeb\TextAnalyzer\Analyzer as TextAnalyzer;
+use Psr\Http\Message\UriInterface;
 use Spatie\Robots\RobotsHeaders;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
@@ -13,11 +13,6 @@ class Harvest
 {
     use HarvestLinksTrait;
     use RobotsTxtTrait;
-
-    const LINK_SELF = 1;
-    const LINK_INTERNAL = 2;
-    const LINK_SUB = 3;
-    const LINK_EXTERNAL = 4;
 
     const DEFAULT_USER_AGENT = 'SeoPocketCrawler - Open Source Bot for SEO Metrics';
 
@@ -46,6 +41,12 @@ class Harvest
     /** @var \PiedWeb\TextAnalyzer\Analysis */
     private $textAnalysis;
 
+    /** @var UriInterface */
+    protected $urlRequested;
+
+    /** @var UriInterface */
+    protected $url;
+
     /**
      * @return self|int
      */
@@ -55,6 +56,8 @@ class Harvest
         string $language = 'en,en-US;q=0.5',
         ?CurlRequest $previousRequest = null
     ) {
+        $url = Link::normalizeUrl($url); // add trailing slash for domain
+
         $response = Request::makeFromRequest($previousRequest, $url, $userAgent, $language);
 
         if ($response instanceof Response) {
@@ -67,51 +70,51 @@ class Harvest
     public function __construct(Response $response)
     {
         $this->response = $response;
+
+        $this->url = new Url($this->response->getEffectiveUrl());
+        $this->urlRequested = new Url($this->response->getUrl());
     }
 
-    public function getResponse()
+    public function urlRequested(): Url
+    {
+        return $this->urlRequested;
+    }
+
+    /**
+     * Return url response (curl effective url)
+     * // todo : check if urlRequested can be diffenrent than url (depends on curl wrench).
+     */
+    public function url(): Url
+    {
+        return $this->url;
+    }
+
+    public function getUrl(): Url
+    {
+        return $this->url;
+    }
+
+    public function getResponse(): Response
     {
         return $this->response;
     }
 
-    public function getRedirection()
-    {
-        $headers = $this->response->getHeaders();
-        $headers = array_change_key_case($headers ? $headers : []);
-        if (isset($headers['location'])) {
-            return phpUri::parse($this->response->getEffectiveUrl())->join($headers['location']);
-        }
-
-        return false;
-    }
-
     public function getDom()
     {
-        if (null === $this->dom) {
-            $this->dom = new DomCrawler($this->response->getContent());
-        }
+        $this->dom = $this->dom ?? new DomCrawler($this->response->getContent());
 
         return $this->dom;
     }
 
-    /**
-     * @return DomCrawler
-     */
-    private function find($selector, $number = null)
+    private function find($selector, $i = null): DomCrawler
     {
-        if (null !== $number) {
-            return $this->getDom()->filter($selector)->eq($number);
-        }
-
-        return $this->getDom()->filter($selector);
+        return null !== $i ? $this->getDom()->filter($selector)->eq($i) : $this->getDom()->filter($selector);
     }
 
     /**
      * Alias for find($selector, 0).
-     *
-     * @return DomCrawler
      */
-    private function findOne($selector)
+    private function findOne($selector): DomCrawler
     {
         return $this->find($selector, 0);
     }
@@ -133,7 +136,7 @@ class Harvest
     {
         $found = $this->find($selector);
 
-        if ($found->count() === 0) {
+        if (0 === $found->count()) {
             return null;
         }
 
@@ -149,19 +152,18 @@ class Harvest
      *
      * @return string|null from content attribute
      */
-    public function getMeta(string $name)
+    public function getMeta(string $name): ?string
     {
         $meta = $this->findOne('meta[name='.$name.']');
 
-        return $meta->count() > 0 ? (null !== $meta->attr('content') ? Helper::clean($meta->attr('content')) : '') : null;
+        return $meta->count() > 0 ? (null !== $meta->attr('content') ? Helper::clean($meta->attr('content')) : '')
+            : null;
     }
 
     /**
      * Renvoie le contenu de l'attribut href de la balise link rel=canonical.
-     *
-     * @return string le contenu de l'attribute href sinon NULL si la balise n'existe pas
      */
-    public function getCanonical()
+    public function getCanonical(): ?string
     {
         $canonical = $this->findOne('link[rel=canonical]');
 
@@ -169,13 +171,13 @@ class Harvest
     }
 
     /*
-     * @return bool
+     * @return bool true si canonical = url requested or no canonical balise
      */
-    public function isCanonicalCorrect()
+    public function isCanonicalCorrect(): bool
     {
         $canonical = $this->getCanonical();
 
-        return $canonical ? $this->response->getEffectiveUrl() == $canonical : true;
+        return null === $canonical ? true : $this->urlRequested()->get() == $canonical;
     }
 
     public function getTextAnalysis()
@@ -207,16 +209,10 @@ class Harvest
 
     /**
      * Return an array of object with two elements Link and anchor.
-     *
-     * @return array|null if we didn't found breadcrumb
      */
-    public function getBreadCrumb(?string $separator = null)
+    public function getBreadCrumb(?string $separator = null): ?array
     {
-        $breadcrumb = ExtractBreadcrumb::get(
-            $this->response->getContent(),
-            $this->getBaseUrl(),
-            $this->response->getEffectiveUrl()
-        );
+        $breadcrumb = ExtractBreadcrumb::get($this);
 
         if (null !== $separator && is_array($breadcrumb)) {
             $breadcrumb = array_map(function ($item) {
@@ -229,68 +225,60 @@ class Harvest
     }
 
     /**
-     * @return string|false
+     * @return ?string absolute url
      */
-    public function amIRedirectToHttps()
+    public function getRedirection(): ?string
     {
         $headers = $this->response->getHeaders();
-        $headers = array_change_key_case(null !== $headers ? $headers : []);
-        $redirUrl = isset($headers['location']) ? $headers['location'] : null;
-        $url = $this->response->getUrl();
-        if (null !== $redirUrl && ($httpsUrl = preg_replace('#^http:#', 'https:', $url, 1)) == $redirUrl) {
-            return $httpsUrl;
+        $headers = array_change_key_case($headers ? $headers : []);
+        if (isset($headers['location']) && ExtractLinks::isWebLink($headers['location'])) {
+            return $this->url()->resolve($headers['location']);
         }
 
-        return false;
+        return null;
     }
 
-    public function getBaseUrl()
+    public function getRedirectionLink(): ?Link
+    {
+        $redirection = $this->getRedirection();
+
+        if (null !== $redirection) {
+            return Link::createRedirection($redirection, $this);
+        }
+
+        return null;
+    }
+
+    public function isRedirectToHttps(): bool
+    {
+        $redirUrl = $this->getRedirection();
+
+        return null !== $redirUrl && preg_replace('#^http:#', 'https:', $this->urlRequested()->get(), 1) == $redirUrl;
+    }
+
+    /**
+     * Return the value in base tag if exist, else, current Url.
+     */
+    public function getBaseUrl(): string
     {
         if (!isset($this->baseUrl)) {
             $base = $this->findOne('base');
             if (null !== $base && isset($base->href) && filter_var($base->href, FILTER_VALIDATE_URL)) {
                 $this->baseUrl = $base->href;
             } else {
-                $this->baseUrl = $this->response->getEffectiveUrl();
+                $this->baseUrl = $this->url()->get();
             }
         }
 
         return $this->baseUrl;
     }
 
-    public function getDomain()
-    {
-        if (!isset($this->domain)) {
-            $urlParsed = parse_url($this->response->getEffectiveUrl());
-            preg_match("/[^\.\/]+(\.com?)?\.[^\.\/]+$/", $urlParsed['host'], $match);
-            $this->domain = $match[0];
-        }
-
-        return $this->domain;
-    }
-
     /**
      * @return int correspond to a const from Indexable
      */
-    public function isIndexable(string $userAgent = 'googlebot')
+    public function isIndexable(string $userAgent = 'googlebot'): int
     {
         return Indexable::isIndexable($this, $userAgent);
-    }
-
-    public function getDomainAndScheme()
-    {
-        if (null === $this->domainWithScheme) {
-            $this->domainWithScheme = self::getDomainAndSchemeFrom($this->response->getEffectiveUrl());
-        }
-
-        return $this->domainWithScheme;
-    }
-
-    public static function getDomainAndSchemeFrom(string $url)
-    {
-        $url = parse_url($url);
-
-        return $url['scheme'].'://'.$url['host'];
     }
 
     protected function metaAuthorizeToFollow()

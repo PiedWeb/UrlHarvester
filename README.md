@@ -13,6 +13,8 @@
 
 Harvest statistics and meta data from an URL or his source code (seo oriented).
 
+Implemented in [Seo Pocket Crawler](https://piedweb.com/seo/crawler) ([source on github](https://github.com/PiedWeb/SeoPocketCrawler)).
+
 ## Install
 
 Via [Packagist](https://img.shields.io/packagist/dt/piedweb/url-harvester.svg?style=flat)
@@ -27,6 +29,7 @@ Harvest Methods :
 
 ```php
 use \PiedWeb\UrlHarvester\Harvest;
+use \PiedWeb\UrlHarvester\Link;
 
 $url = 'https://piedweb.com';
 
@@ -49,10 +52,10 @@ Harvest::fromUrl($url)
     ->isIndexable($userAgent = 'googlebot') // @return int corresponding to a const from Indexable
 
     ->getLinks()
-    ->getLinks(Harvest::LINK_SELF)
-    ->getLinks(Harvest::LINK_INTERNAL)
-    ->getLinks(Harvest::LINK_SUB)
-    ->getLinks(Harvest::LINK_EXTERNAL)
+    ->getLinks(Link::LINK_SELF)
+    ->getLinks(Link::LINK_INTERNAL)
+    ->getLinks(Link::LINK_SUB)
+    ->getLinks(Link::LINK_EXTERNAL)
     ->getLinkedRessources() // Return an array with all attributes containing a href or a src property
     ->mayFollow() // check headers and meta and return bool
 
@@ -61,23 +64,6 @@ Harvest::fromUrl($url)
 
     ->getRobotsTxt() // @return \Spatie\Robots\RobotsTxt or empty string
     ->setRobotsTxt($content) // @param string or RobotsTxt
-```
-
-All others methods:
-```php
-use \PiedWeb\UrlHarvester\Request;
-use \PiedWeb\UrlHarvester\ExtractLinks;
-use \PiedWeb\UrlHarvester\ExtractBreadcrumb;
-
-Request::make(string $url, string $userAgent, string $language = 'en-US,en;q=0.5', ?string $proxy = null)
-Request::makeFromRequest(?CurlRequest $request = null, ...
-// @return \PiedWeb\Curl\Response or int curl error
-
-
-ExtractLinks::get(\simple_html_dom $dom, string $baseUrl, $selector = ExtractLinks::SELECT_A); // @return array
-
-ExtractBreadcrumb::get($source, $baseUrl, $current = null); // @return array
-
 ```
 
 ## Testing

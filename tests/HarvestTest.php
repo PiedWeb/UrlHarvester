@@ -31,6 +31,32 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         return self::$harvest;
     }
 
+    private function getHarvestFromCache()
+    {
+        $response = new ResponseFromCache(
+            'HTTP/1.1 200 OK'.PHP_EOL.PHP_EOL.file_get_contents(__DIR__.'/page.html'),
+            $this->getUrl(),
+            ['content_type' => 'text/html; charset=UTF-8']
+        );
+
+        $harvest = new Harvest($response);
+
+        return $harvest;
+    }
+
+
+    public function testHarvestLinksForReal()
+    {
+        $harvest = $this->getHarvestFromCache();
+        $url = $this->getUrl();
+
+        $this->assertTrue(count($harvest->getLinks(Link::LINK_SELF)) == 1);
+        $this->assertTrue(count($harvest->getLinks(Link::LINK_INTERNAL)) == 4);
+        $this->assertTrue(count($harvest->getLinks(Link::LINK_EXTERNAL)) == 3);
+        $this->assertTrue(count($harvest->getLinks(Link::LINK_SUB)) == 2);
+        $this->assertTrue(count($harvest->getLinks()) == 10);
+    }
+
     public function testHarvest()
     {
         $harvest = $this->getHarvest();
@@ -51,23 +77,24 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
         $this->assertTrue(is_array($harvest->getBreadCrumb()));
 
-        $this->assertSame('piedweb.com', $harvest->getDomain());
+        $this->assertSame('piedweb.com', $harvest->url()->getRegistrableDomain());
         $this->assertSame('https://piedweb.com/seo/crawler', $harvest->getBaseUrl());
     }
+
 
     public function testHarvestLinks()
     {
         $harvest = $this->getHarvest();
         $url = $this->getUrl();
 
+
         $this->assertTrue(is_array($harvest->getLinkedRessources()));
         $this->assertTrue(is_array($harvest->getLinks()));
-        $this->assertTrue(is_array($harvest->getLinks(Harvest::LINK_SELF)));
-        $this->assertTrue(is_array($harvest->getLinks(Harvest::LINK_INTERNAL)));
-        $this->assertTrue(is_array($harvest->getLinks(Harvest::LINK_SUB)));
-        $this->assertTrue(is_array($harvest->getLinks(Harvest::LINK_EXTERNAL)));
+        $this->assertTrue(is_array($harvest->getLinks(Link::LINK_SELF)));
+        $this->assertTrue(is_array($harvest->getLinks(Link::LINK_INTERNAL)));
+        $this->assertTrue(is_array($harvest->getLinks(Link::LINK_SUB)));
+        $this->assertTrue(is_array($harvest->getLinks(Link::LINK_EXTERNAL)));
         $this->assertTrue(is_int($harvest->getNbrDuplicateLinks()));
-        $this->assertSame('/seo/crawler', $harvest->getAbsoluteInternalLink($this->getUrl()));
     }
 
     public function testFollow()
@@ -76,16 +103,6 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
         $this->assertTrue($harvest->getLinks()[0]->mayFollow());
         $this->assertTrue($harvest->mayFollow());
-    }
-
-    public function testNofollow()
-    {
-        $html = '<a href="/test" rel=nofollow>test</a>';
-        $dom = new DomCrawler($html);
-
-        $link = new Link('/test', $dom->filter('a')->getNode(0));
-
-        $this->assertTrue(! $link->mayFollow());
     }
 
     public function testRedirection()
@@ -98,17 +115,6 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame('https://piedweb.com/', $harvest->getRedirection());
         $this->assertSame(Indexable::NOT_INDEXABLE_3XX, $harvest->isIndexable());
-    }
-
-    public function testDomain()
-    {
-        $url = 'https://www.google.co.uk/';
-        $harvest = Harvest::fromUrl(
-            $url,
-            'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0'
-        );
-
-        $this->assertSame('google.co.uk', $harvest->getDomain());
     }
 
     public function testIndexable()
