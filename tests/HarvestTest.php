@@ -157,4 +157,9 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(0, $harvest->isIndexable());
     }
+
+    public function testTextAnalysis()
+    {
+        $this->assertTrue(count($this->getHarvest()->getTextAnalysis()->getExpressionsByDensity())>1);
+    }
 }

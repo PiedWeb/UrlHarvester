@@ -122,7 +122,7 @@ class Harvest
     {
         $found = $this->findOne($selector);
 
-        return null !== $found ? Helper::clean($found->text()) : null;
+        return $found->count() > 0 ? Helper::clean($found->text()) : null;
     }
 
     public function getUniqueTag($selector = 'title')
@@ -175,16 +175,16 @@ class Harvest
 
     public function getTextAnalysis()
     {
-        if (null === $this->textAnalysis) {
-            $this->textAnalysis = TextAnalyzer::get(
+        if (null !== $this->textAnalysis) {
+            return $this->textAnalysis;
+        }
+
+        return $this->textAnalysis = $this->getDom()->count() > 0 ? TextAnalyzer::get(
                 $this->getDom()->text(),
                 true,   // only sentences
                 1,      // no expression, just words
                 0      // keep trail
-            );
-        }
-
-        return $this->textAnalysis;
+        ) : null;
     }
 
     public function getKws()
