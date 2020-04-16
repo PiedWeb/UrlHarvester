@@ -4,3 +4,4 @@ vendor
 phpcs.xml
 phpunit.xml
 debug.php
+.php_cs.cache
