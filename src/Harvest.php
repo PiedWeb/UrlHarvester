@@ -5,7 +5,6 @@ namespace PiedWeb\UrlHarvester;
 use PiedWeb\Curl\Request as CurlRequest;
 use PiedWeb\Curl\Response;
 use PiedWeb\TextAnalyzer\Analyzer as TextAnalyzer;
-use Psr\Http\Message\UriInterface;
 use Spatie\Robots\RobotsHeaders;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
@@ -29,22 +28,16 @@ class Harvest
     /** @var string */
     protected $baseUrl;
 
-    /** @var string */
-    protected $domain;
-
     /** @var bool */
     protected $follow;
-
-    /** @var string */
-    private $domainWithScheme;
 
     /** @var \PiedWeb\TextAnalyzer\Analysis */
     private $textAnalysis;
 
-    /** @var UriInterface */
+    /** @var Url */
     protected $urlRequested;
 
-    /** @var UriInterface */
+    /** @var Url */
     protected $url;
 
     /**

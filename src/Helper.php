@@ -3,7 +3,6 @@
 namespace PiedWeb\UrlHarvester;
 
 use ForceUTF8\Encoding;
-use simple_html_dom;
 
 class Helper
 {
@@ -26,30 +25,5 @@ class Helper
         }
 
         return $str;
-    }
-
-    public static function removeAccent($str)
-    {
-        if ($str !== mb_convert_encoding(mb_convert_encoding($str, 'UTF-32', 'UTF-8'), 'UTF-8', 'UTF-32')) {
-            $str = mb_convert_encoding($str, 'UTF-8');
-        }
-        $str = htmlentities($str, ENT_NOQUOTES, 'UTF-8');
-        $str = preg_replace('`&([a-z]{1,2})(acute|uml|circ|grave|ring|cedil|slash|tilde|caron|lig);`i', '$1', $str);
-
-        return $str;
-    }
-
-    public static function imageToTxt($txt)
-    {
-        $html = new simple_html_dom();
-        $html->load($txt);
-        foreach ($html->find('img') as $img) {
-            $alt = isset($img->alt) ? $img->alt : '-';
-            $alt = substr($alt, 0, 300).(strlen($alt) > 300 ? '~' : '');
-            $src = isset($img->src) ? '('.$img->src.')' : null;
-            $txt = str_replace($img->outertext, '!['.$alt.']'.$src, $txt);
-        }
-
-        return $txt;
     }
 }

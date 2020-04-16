@@ -118,7 +118,7 @@ class Link
         return $this;
     }
 
-    public function getUrl($string = false): Url
+    public function getUrl(): Url
     {
         return $this->url;
     }
@@ -155,10 +155,7 @@ class Link
 
         // check "wrapper" rel
         if (null !== $this->element && null !== $this->element->getAttribute('rel')) {
-            if (false !== strpos($this->element->getAttribute('rel'), 'nofollow')
-                || false !== strpos($this->element->getAttribute('rel'), 'sponsored')
-                || false !== strpos($this->element->getAttribute('rel'), 'ugc')
-            ) {
+            if (preg_match('(nofollow|sponsored|ugc)', $this->element->getAttribute('rel'))) {
                 return false;
             }
         }

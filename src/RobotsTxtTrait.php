@@ -14,6 +14,8 @@ trait RobotsTxtTrait
 
     abstract public function getResponse();
 
+    abstract public function url();
+
     /**
      * @return RobotsTxt|string containing the current Robots.txt or NULL if an error occured
      *                          or empty string if robots is empty file

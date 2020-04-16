@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PiedWeb\UrlHarvester\Test;
 
+use PiedWeb\UrlHarvester\Url;
 use PiedWeb\UrlHarvester\Harvest;
 use PiedWeb\UrlHarvester\Indexable;
 use PiedWeb\UrlHarvester\Link;
@@ -77,5 +78,12 @@ class LinkTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(!$link->isInternalLink());
         $this->assertTrue(!$link->isSubLink());
         $this->assertTrue(!$link->isSelfLink());
+    }
+
+    public function testUrl()
+    {
+        $url = new Url($this->getUrl());
+
+        $this->assertTrue($url->resolve('//piedweb.com') == 'https://piedweb.com');
     }
 }
