@@ -180,10 +180,10 @@ class Harvest
         }
 
         return $this->textAnalysis = $this->getDom()->count() > 0 ? TextAnalyzer::get(
-                $this->getDom()->text(),
-                true,   // only sentences
-                1,      // no expression, just words
-                0      // keep trail
+            $this->getDom()->text(),
+            true,   // only sentences
+            1,      // no expression, just words
+            0      // keep trail
         ) : null;
     }
 
