@@ -76,4 +76,9 @@ class Url
     {
         return (string) $this->http;
     }
+
+    public function relativize()
+    {
+        return substr($this->get(), strlen($this->getOrigin()));
+    }
 }

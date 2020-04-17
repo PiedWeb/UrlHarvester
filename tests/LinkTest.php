@@ -86,4 +86,11 @@ class LinkTest extends \PHPUnit\Framework\TestCase
 
         $this->assertTrue($url->resolve('//piedweb.com') == 'https://piedweb.com');
     }
+
+    public function testRelativize()
+    {
+        $url = new Url($this->getUrl());
+
+        $this->assertSame($url->relativize(), '/');
+    }
 }
