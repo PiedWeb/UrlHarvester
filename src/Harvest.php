@@ -269,9 +269,14 @@ class Harvest
     /**
      * @return int correspond to a const from Indexable
      */
-    public function isIndexable(string $userAgent = 'googlebot'): int
+    public function indexable(string $userAgent = 'googlebot'): int
     {
-        return Indexable::isIndexable($this, $userAgent);
+        return Indexable::indexable($this, $userAgent);
+    }
+
+    public function isIndexable(string $userAgent = 'googlebot'): bool
+    {
+        return Indexable::INDEXABLE === $this->indexable($userAgent);
     }
 
     protected function metaAuthorizeToFollow()

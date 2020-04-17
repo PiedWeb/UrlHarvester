@@ -114,23 +114,79 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertSame('https://piedweb.com/', $harvest->getRedirection());
-        $this->assertSame(Indexable::NOT_INDEXABLE_3XX, $harvest->isIndexable());
+        $this->assertSame(Indexable::NOT_INDEXABLE_3XX, $harvest->indexable());
     }
 
     public function testIndexable()
     {
+
+        $indexable = new Indexable($this->getHarvest());
+        $this->assertTrue($indexable->metaAllows());
+        $this->assertTrue($indexable->headersAllow());
+        $this->assertTrue(Indexable::INDEXABLE == $this->getHarvest()->indexable());
+
         $url = 'https://dev.piedweb.com/disallow';
         $harvest = Harvest::fromUrl(
             $url,
             'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0'
         );
 
-        $this->assertSame(Indexable::NOT_INDEXABLE_ROBOTS, $harvest->isIndexable());
+        $this->assertSame(Indexable::NOT_INDEXABLE_ROBOTS, $harvest->indexable());
         $harvest->setRobotsTxt($harvest->getRobotsTxt());
 
-        $indexable = new Indexable($this->getHarvest());
-        $this->assertTrue($indexable->metaAllows());
-        $this->assertTrue($indexable->headersAllow());
+        $harvest2 = new Harvest(new ResponseFromCache(
+            'HTTP/1.1 200 OK'.PHP_EOL.'X-robots-tag: noindex'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html>'
+            .'<head></head><body><p>Tests</p></body>',
+            'https://piedweb.com/noindex-headers',
+            ['content_type' => 'text/html; charset=UTF-8']
+        ));
+        $harvest2->setRobotsTxt($harvest->getRobotsTxt());
+        $this->assertSame(Indexable::NOT_INDEXABLE_HEADER, $harvest2->indexable());
+
+        $harvest2 = new Harvest(new ResponseFromCache(
+            'HTTP/1.1 200 OK'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html>'
+            .'<head><meta name="robots" content="noindex"></head><body><p>Tests</p></body>',
+            'https://piedweb.com/',
+            ['content_type' => 'text/html; charset=UTF-8']
+        ));
+        $harvest2->setRobotsTxt($harvest->getRobotsTxt());
+        $this->assertSame(Indexable::NOT_INDEXABLE_META, $harvest2->indexable());
+
+        $harvest2 = new Harvest(new ResponseFromCache(
+            'HTTP/1.1 200 OK'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html>'
+            .'<head><link rel="canonical" href="https://piedweb.com/seo" /></head><body><p>Tests</p></body>',
+            'https://piedweb.com/',
+            ['content_type' => 'text/html; charset=UTF-8']
+        ));
+        $harvest2->setRobotsTxt($harvest->getRobotsTxt());
+        $this->assertSame(Indexable::NOT_INDEXABLE_CANONICAL, $harvest2->indexable());
+
+        $harvest2 = new Harvest(new ResponseFromCache(
+            'HTTP/1.1 404 OK'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html>'
+            .'<head></head><body><p>Tests</p></body>',
+            'https://piedweb.com/',
+            ['content_type' => 'text/html; charset=UTF-8']
+        ));
+        $harvest2->setRobotsTxt($harvest->getRobotsTxt());
+        $this->assertSame(Indexable::NOT_INDEXABLE_4XX, $harvest2->indexable());
+
+        $harvest2 = new Harvest(new ResponseFromCache(
+            'HTTP/1.1 510 OK'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html>'
+            .'<head></head><body><p>Tests</p></body>',
+            'https://piedweb.com/',
+            ['content_type' => 'text/html; charset=UTF-8']
+        ));
+        $harvest2->setRobotsTxt($harvest->getRobotsTxt());
+        $this->assertSame(Indexable::NOT_INDEXABLE_5XX, $harvest2->indexable());
+
+        $harvest2 = new Harvest(new ResponseFromCache(
+            'HTTP/1.1 301 Moved Permanently'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html>'
+            .'<head></head><body><p>Tests</p></body>',
+            'https://piedweb.com/',
+            ['content_type' => 'text/html; charset=UTF-8']
+        ));
+        $harvest2->setRobotsTxt($harvest->getRobotsTxt());
+        $this->assertSame(Indexable::NOT_INDEXABLE_3XX, $harvest2->indexable());
     }
 
     public function testHarvestWithPreviousRequest()
@@ -155,7 +211,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
             ['content_type' => 'text/html; charset=UTF-8']
         ));
 
-        $this->assertSame(0, $harvest->isIndexable());
+        $this->assertTrue($harvest->isIndexable());
     }
 
     public function testTextAnalysis()

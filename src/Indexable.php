@@ -2,7 +2,7 @@
 
 namespace PiedWeb\UrlHarvester;
 
-use Spatie\Robots\RobotsHeaders;
+//use Spatie\Robots\RobotsHeaders;
 
 class Indexable
 {
@@ -53,7 +53,7 @@ class Indexable
         return RobotsHeaders::create($headers)->mayIndex($this->isIndexableFor);
     }
 
-    public static function isIndexable(Harvest $harvest, string $isIndexableFor = 'googlebot'): int
+    public static function indexable(Harvest $harvest, string $isIndexableFor = 'googlebot'): int
     {
         $self = new self($harvest, $isIndexableFor);
 
@@ -79,7 +79,7 @@ class Indexable
 
         // status 4XX
         if ($statusCode < 500 && $statusCode > 399) {
-            return self::NOT_INDEXABLE_5XX;
+            return self::NOT_INDEXABLE_4XX;
         }
 
         // status 5XX
