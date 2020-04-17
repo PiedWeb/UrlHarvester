@@ -49,7 +49,7 @@ Harvest::fromUrl($url)
     ->getTextAnalysis() // @return \PiedWeb\TextAnalyzer\Analysis
     ->getKws() // @return 10 more used words
     ->getBreadCrumb()
-    ->isIndexable($userAgent = 'googlebot') // @return int corresponding to a const from Indexable
+    ->indexable($userAgent = 'googlebot') // @return int corresponding to a const from Indexable
 
     ->getLinks()
     ->getLinks(Link::LINK_SELF)
