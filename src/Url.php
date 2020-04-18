@@ -67,6 +67,11 @@ class Url
         return $this->http->withFragment('');
     }
 
+    public function getRelativizedDocumentUrl(): string
+    {
+        return substr($this->http->withFragment(''), strlen($this->getOrigin()));
+    }
+
     public function get()
     {
         return $this->__toString();

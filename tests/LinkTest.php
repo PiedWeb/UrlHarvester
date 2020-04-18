@@ -39,7 +39,9 @@ class LinkTest extends \PHPUnit\Framework\TestCase
     {
 
         $link = new Link('https://www.piedweb.com', $this->getHarvest());
+
         $this->assertSame($link->getPageUrl(), 'https://www.piedweb.com/');
+        $this->assertSame($link->getUrl()->getRelativizedDocumentUrl(), '/');
     }
 
     private function getDomElement()

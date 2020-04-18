@@ -205,12 +205,4 @@ class Link
 
         return self::LINK_EXTERNAL;
     }
-
-    // todo useless ?!
-    public function getAbsoluteInternalLink()
-    {
-        if ($this->isInternalLink()) {
-            return substr($this->url, strlen($this->getParentUrl()->getOrigin()));
-        }
-    }
 }
