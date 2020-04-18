@@ -5,7 +5,7 @@ namespace PiedWeb\UrlHarvester;
 use PiedWeb\Curl\Request as CurlRequest;
 use PiedWeb\Curl\Response;
 use PiedWeb\TextAnalyzer\Analyzer as TextAnalyzer;
-//use Spatie\Robots\RobotsHeaders;
+use Spatie\Robots\RobotsHeaders;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 class Harvest

@@ -2,7 +2,7 @@
 
 namespace PiedWeb\UrlHarvester;
 
-//use Spatie\Robots\RobotsHeaders;
+use Spatie\Robots\RobotsHeaders;
 
 class Indexable
 {
