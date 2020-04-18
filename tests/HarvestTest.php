@@ -44,6 +44,12 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         return $harvest;
     }
 
+    public function testHarvestWordCount()
+    {
+        $harvest = $this->getHarvestFromCache();
+
+        $this->assertTrue($harvest->getWordCount() > 50);
+    }
 
     public function testHarvestLinksForReal()
     {

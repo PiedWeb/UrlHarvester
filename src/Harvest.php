@@ -187,6 +187,11 @@ class Harvest
         ) : null;
     }
 
+    public function getWordCount()
+    {
+        return str_word_count($this->getDom()->text() ?? '');
+    }
+
     public function getKws()
     {
         return $this->getTextAnalysis()->getExpressions(10);
@@ -287,7 +292,7 @@ class Harvest
     public function mayFollow()
     {
         if (null === $this->follow) {
-            $robotsHeaders = new RobotsHeaders($this->response->getHeaders());
+            $robotsHeaders = new RobotsHeaders((array) $this->response->getHeaders());
             $this->follow = $robotsHeaders->mayFollow() && $this->metaAuthorizeToFollow() ? true : false;
         }
 
