@@ -187,9 +187,9 @@ class Harvest
         ) : null;
     }
 
-    public function getWordCount()
+    public function getWordCount(): int
     {
-        return str_word_count($this->getDom()->text() ?? '');
+        return str_word_count($this->getDom()->text('') ?? '');
     }
 
     public function getKws()
