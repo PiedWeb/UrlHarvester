@@ -15,6 +15,7 @@ class Indexable
     const NOT_INDEXABLE_4XX = 5;
     const NOT_INDEXABLE_5XX = 6;
     const NOT_INDEXABLE_NETWORK_ERROR = 7;
+    const NOT_INDEXABLE_TOO_BIG = 10;
     const NOT_INDEXABLE_3XX = 8;
     const NOT_INDEXABLE_NOT_HTML = 9;
 

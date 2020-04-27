@@ -199,7 +199,7 @@ class Harvest
 
     public function getRatioTxtCode(): int
     {
-        $textLenght = strlen($this->getDom()->text());
+        $textLenght = strlen($this->getDom()->text(''));
         $htmlLenght = strlen(Helper::clean($this->response->getContent()));
 
         return (int) ($htmlLenght > 0 ? round($textLenght / $htmlLenght * 100) : 0);
