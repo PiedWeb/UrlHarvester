@@ -15,8 +15,8 @@
   "license": "MIT",
   "authors": [
     {
-      "name": "Robin D. (ak Pied Web)",
-      "email": "contact@robin-d.fr",
+      "name": "Robin@PiedWeb",
+      "email": "contact@piedweb.com",
       "homepage": "https://piedweb.com"
     }
   ],
@@ -25,7 +25,7 @@
     "neitanod/forceutf8": "^2.0",
     "piedweb/text-analyzer": "^0.0",
     "spatie/robots-txt": "^1.0",
-    "piedweb/curl": "^0.0",
+    "piedweb/curl": "^0.0.17",
     "symfony/dom-crawler": "^5.0",
     "symfony/css-selector": "^5.0",
     "league/uri": "^6",
