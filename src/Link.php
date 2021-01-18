@@ -154,7 +154,7 @@ class Link
         }
 
         // check "wrapper" rel
-        if (null !== $this->element && null !== $this->element->getAttribute('rel')) {
+        if (null !== $this->element && $this->element->getAttribute('rel')) {
             if (preg_match('(nofollow|sponsored|ugc)', $this->element->getAttribute('rel'))) {
                 return false;
             }

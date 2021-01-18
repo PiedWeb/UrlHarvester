@@ -58,12 +58,12 @@ class ExtractLinks
         $attributes = explode(',', str_replace(['a[', '*[', '[', ']'], '', $this->selector));
         foreach ($attributes as $attribute) {
             $url = $element->getAttribute($attribute);
-            if (null !== $url) {
+            if ($url) {
                 break;
             }
         }
 
-        if (! isset($url) || ! $this->isWebLink($url)) {
+        if (! $url || ! $this->isWebLink($url)) {
             return null;
         }
 

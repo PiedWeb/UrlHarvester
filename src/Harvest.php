@@ -94,7 +94,7 @@ class Harvest
 
     public function getDom()
     {
-        $this->dom = $this->dom ?? new DomCrawler($this->response->getContent());
+        $this->dom = $this->dom !== null ? $this->dom : new DomCrawler($this->response->getContent());
 
         return $this->dom;
     }
@@ -116,7 +116,7 @@ class Harvest
      * Return content inside a selector.
      * Eg.: getTag('title').
      *
-     * @return string
+     * @return ?string
      */
     public function getTag($selector)
     {
@@ -189,7 +189,7 @@ class Harvest
 
     public function getWordCount(): int
     {
-        return str_word_count($this->getDom()->text('') ?? '');
+        return (int) str_word_count($this->getDom()->text('') ?? '');
     }
 
     public function getKws()
@@ -208,7 +208,7 @@ class Harvest
     /**
      * Return an array of object with two elements Link and anchor.
      */
-    public function getBreadCrumb(?string $separator = null): ?array
+    public function getBreadCrumb(?string $separator = null)
     {
         $breadcrumb = ExtractBreadcrumb::get($this);
 
@@ -259,10 +259,10 @@ class Harvest
      */
     public function getBaseUrl(): string
     {
-        if (! isset($this->baseUrl)) {
+        if (! $this->baseUrl) {
             $base = $this->findOne('base');
-            if (null !== $base && isset($base->href) && filter_var($base->href, FILTER_VALIDATE_URL)) {
-                $this->baseUrl = $base->href;
+            if ($base->getBaseHref() && filter_var($base->getBaseHref(), FILTER_VALIDATE_URL)) {
+                $this->baseUrl = $base->getBaseHref();
             } else {
                 $this->baseUrl = $this->url()->get();
             }
