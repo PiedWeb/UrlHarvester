@@ -4,6 +4,7 @@ language: php
 php:
   - 7.3
   - 7.4
+  - 8.0
 
 sudo: false
 
@@ -11,7 +12,6 @@ sudo: false
 cache:
   directories:
     - $HOME/.composer/cache
-
 
 before_script:
   - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-dist
