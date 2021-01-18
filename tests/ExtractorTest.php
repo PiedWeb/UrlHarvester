@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace PiedWeb\UrlHarvester\Test;
 
-use PiedWeb\UrlHarvester\Request;
-use PiedWeb\UrlHarvester\Helper;
+use PiedWeb\UrlHarvester\ExtractBreadcrumb;
 use PiedWeb\UrlHarvester\ExtractLinks;
 use PiedWeb\UrlHarvester\Harvest;
-use PiedWeb\UrlHarvester\ExtractBreadcrumb;
-use Symfony\Component\DomCrawler\Crawler as DomCrawler;
+use PiedWeb\UrlHarvester\Helper;
 
 class ExtractorTest extends \PHPUnit\Framework\TestCase
 {

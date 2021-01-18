@@ -23,7 +23,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertTrue(strlen($request->getContent()) > 10);
-        $this->assertTrue(!empty($request->getHeaders()));
+        $this->assertTrue(! empty($request->getHeaders()));
     }
 
     public function testRequestRedir()

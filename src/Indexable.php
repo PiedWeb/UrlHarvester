@@ -44,7 +44,7 @@ class Indexable
         $meta = $this->harvest->getMeta($this->isIndexableFor);
         $generic = $this->harvest->getMeta('robots');
 
-        return !(false !== stripos($meta, 'noindex') || false !== stripos($generic, 'noindex'));
+        return ! (false !== stripos($meta, 'noindex') || false !== stripos($generic, 'noindex'));
     }
 
     public function headersAllow()
@@ -59,20 +59,20 @@ class Indexable
         $self = new self($harvest, $isIndexableFor);
 
         // robots
-        if (!$self->robotsTxtAllows()) {
+        if (! $self->robotsTxtAllows()) {
             return self::NOT_INDEXABLE_ROBOTS;
         }
 
-        if (!$self->headersAllow()) {
+        if (! $self->headersAllow()) {
             return self::NOT_INDEXABLE_HEADER;
         }
 
-        if (!$self->metaAllows()) {
+        if (! $self->metaAllows()) {
             return self::NOT_INDEXABLE_META;
         }
 
         // canonical
-        if (!$harvest->isCanonicalCorrect()) {
+        if (! $harvest->isCanonicalCorrect()) {
             return self::NOT_INDEXABLE_CANONICAL;
         }
 

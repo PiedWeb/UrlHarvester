@@ -4,15 +4,10 @@ declare(strict_types=1);
 
 namespace PiedWeb\UrlHarvester\Test;
 
-use PiedWeb\UrlHarvester\Url;
 use PiedWeb\UrlHarvester\Harvest;
-use PiedWeb\UrlHarvester\Indexable;
 use PiedWeb\UrlHarvester\Link;
-use PiedWeb\Curl\ResponseFromCache;
+use PiedWeb\UrlHarvester\Url;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
-use League\Uri\UriResolver;
-use League\Uri\Uri;
-use League\Uri\Http;
 
 class LinkTest extends \PHPUnit\Framework\TestCase
 {
@@ -37,7 +32,6 @@ class LinkTest extends \PHPUnit\Framework\TestCase
 
     public function testLinkNormalization()
     {
-
         $link = new Link('https://www.piedweb.com', $this->getHarvest());
 
         $this->assertSame($link->getPageUrl(), 'https://www.piedweb.com/');
@@ -46,7 +40,7 @@ class LinkTest extends \PHPUnit\Framework\TestCase
 
     private function getDomElement()
     {
-         $html = '<a href="/test" rel=nofollow>test</a>';
+        $html = '<a href="/test" rel=nofollow>test</a>';
         $dom = new DomCrawler($html);
 
         return $dom->filter('a')->getNode(0);
@@ -77,9 +71,9 @@ class LinkTest extends \PHPUnit\Framework\TestCase
     {
         $link = new Link('https://external.com/test', $this->getHarvest(), $this->getDomElement());
 
-        $this->assertTrue(!$link->isInternalLink());
-        $this->assertTrue(!$link->isSubLink());
-        $this->assertTrue(!$link->isSelfLink());
+        $this->assertTrue(! $link->isInternalLink());
+        $this->assertTrue(! $link->isSubLink());
+        $this->assertTrue(! $link->isSelfLink());
     }
 
     public function testUrl()

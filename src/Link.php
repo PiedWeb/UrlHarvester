@@ -149,7 +149,7 @@ class Link
     public function mayFollow()
     {
         // check meta robots and headers
-        if (null !== $this->parentDoc && !$this->parentDoc->mayFollow()) {
+        if (null !== $this->parentDoc && ! $this->parentDoc->mayFollow()) {
             return false;
         }
 
@@ -178,7 +178,7 @@ class Link
 
     public function isSubLink(): bool
     {
-        return !$this->isInternalLink()
+        return ! $this->isInternalLink()
             && $this->url->getRegistrableDomain() == $this->getParentUrl()->getRegistrableDomain();
         //&& strtolower(substr($this->getHost(), -strlen($this->parentDomain))) === $this->parentDomain;
     }

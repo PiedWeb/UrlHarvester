@@ -36,7 +36,7 @@ trait RobotsTxtTrait
             ;
             $result = $request->exec();
 
-            if (!$result instanceof \PiedWeb\Curl\Response
+            if (! $result instanceof \PiedWeb\Curl\Response
                 || false === stripos($result->getContentType(), 'text/plain')
                 || empty(trim($result->getContent()))
             ) {

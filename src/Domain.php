@@ -9,19 +9,20 @@ namespace PiedWeb\UrlHarvester;
 use Pdp\Cache;
 use Pdp\CurlHttpClient;
 use Pdp\Manager;
+use Pdp\Rules;
 
 class Domain
 {
     protected static $rules;
 
-    public static function resolve(string $host): \Pdp\Domain
+    public static function resolve(string $host): \Pdp\ResolvedDomainName
     {
         return self::getRules()->resolve($host);
     }
 
     public static function getRegistrableDomain(string $host): ?string
     {
-        return self::resolve($host)->getRegistrableDomain();
+        return self::resolve($host)->registrableDomain()->toString();
     }
 
     protected static function getRules()
@@ -30,6 +31,11 @@ class Domain
             return self::$rules;
         }
 
-        return self::$rules = (new Manager(new Cache(), new CurlHttpClient()))->getRules();
+        $reflector = new \ReflectionClass("Pdp\Rules");
+        $base = dirname(dirname($reflector->getFileName()));
+
+        return self::$rules = Rules::fromPath($base.'/test_data/public_suffix_list.dat');
+
+        //return self::$rules = (new Manager(new Cache(), new CurlHttpClient()))->getRules();
     }
 }

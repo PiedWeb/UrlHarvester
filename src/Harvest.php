@@ -259,7 +259,7 @@ class Harvest
      */
     public function getBaseUrl(): string
     {
-        if (!isset($this->baseUrl)) {
+        if (! isset($this->baseUrl)) {
             $base = $this->findOne('base');
             if (null !== $base && isset($base->href) && filter_var($base->href, FILTER_VALIDATE_URL)) {
                 $this->baseUrl = $base->href;
@@ -286,7 +286,7 @@ class Harvest
 
     protected function metaAuthorizeToFollow()
     {
-        return !(strpos($this->getMeta('googlebot'), 'nofollow') || strpos($this->getMeta('robots'), 'nofollow'));
+        return ! (strpos($this->getMeta('googlebot'), 'nofollow') || strpos($this->getMeta('robots'), 'nofollow'));
     }
 
     public function mayFollow()

@@ -22,7 +22,7 @@ class Url
     {
         $this->http = Http::createFromString($url);
 
-        if (!UriInfo::isAbsolute($this->http)) {
+        if (! UriInfo::isAbsolute($this->http)) {
             throw new \Exception('$url must be absolute (`'.$url.'`)');
         }
     }

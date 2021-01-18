@@ -63,7 +63,7 @@ class ExtractLinks
             }
         }
 
-        if (!isset($url) || !$this->isWebLink($url)) {
+        if (! isset($url) || ! $this->isWebLink($url)) {
             return null;
         }
 

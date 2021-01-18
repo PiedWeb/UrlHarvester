@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace PiedWeb\UrlHarvester\Test;
 
+use PiedWeb\Curl\ResponseFromCache;
 use PiedWeb\UrlHarvester\Harvest;
 use PiedWeb\UrlHarvester\Indexable;
 use PiedWeb\UrlHarvester\Link;
-use PiedWeb\Curl\ResponseFromCache;
-use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 class HarvestTest extends \PHPUnit\Framework\TestCase
 {
@@ -87,7 +86,6 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('https://piedweb.com/seo/crawler', $harvest->getBaseUrl());
     }
 
-
     public function testHarvestLinks()
     {
         $harvest = $this->getHarvest();
@@ -125,7 +123,6 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
     public function testIndexable()
     {
-
         $indexable = new Indexable($this->getHarvest());
         $this->assertTrue($indexable->metaAllows());
         $this->assertTrue($indexable->headersAllow());
@@ -222,6 +219,6 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
     public function testTextAnalysis()
     {
-        $this->assertTrue(count($this->getHarvest()->getTextAnalysis()->getExpressionsByDensity())>1);
+        $this->assertTrue(count($this->getHarvest()->getTextAnalysis()->getExpressionsByDensity()) > 1);
     }
 }
