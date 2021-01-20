@@ -22,13 +22,13 @@
   ],
   "require": {
     "php": "^7.3|^8.0",
-    "neitanod/forceutf8": "^2.0",
+    "neitanod/forceutf8": "^2.0.4",
     "piedweb/text-analyzer": "^0.0",
     "spatie/robots-txt": "^1.0",
-    "piedweb/curl": "^0.0.17",
+    "piedweb/curl": "^0.0.18",
     "symfony/dom-crawler": "^5.0",
     "symfony/css-selector": "^5.0",
-    "league/uri": "^6",
+    "league/uri": "^6.4",
     "jeremykendall/php-domain-parser": "^6.0"
   },
   "require-dev": {
