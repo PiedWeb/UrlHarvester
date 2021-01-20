@@ -5,10 +5,11 @@
 # Url Meta Data Harvester
 
 [![Latest Version](https://img.shields.io/github/tag/PiedWeb/UrlHarvester.svg?style=flat&label=release)](https://github.com/PiedWeb/UrlHarvester/tags)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/PiedWeb/UrlHarvester/blob/master/LICENSE)
-[![Build Status](https://img.shields.io/travis/PiedWeb/UrlHarvester/master.svg?style=flat)](https://travis-ci.org/PiedWeb/UrlHarvester)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/PiedWeb/UrlHarvester/Tests?label=tests)](https://github.com/PiedWeb/UrlHarvester/actions)
 [![Quality Score](https://img.shields.io/scrutinizer/g/PiedWeb/UrlHarvester.svg?style=flat)](https://scrutinizer-ci.com/g/PiedWeb/UrlHarvester)
-[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/PiedWeb/UrlHarvester.svg?style=flat)](https://scrutinizer-ci.com/g/PiedWeb/UrlHarvester/code-structure)
+[![Code Coverage](https://codecov.io/gh/PiedWeb/UrlHarvester/branch/main/graph/badge.svg)](https://codecov.io/gh/PiedWeb/UrlHarvester/branch/main)
+[![Type Coverage](https://shepherd.dev/github/PiedWeb/UrlHarvester/coverage.svg)](https://shepherd.dev/github/PiedWeb/UrlHarvester)
 [![Total Downloads](https://img.shields.io/packagist/dt/piedweb/url-harvester.svg?style=flat)](https://packagist.org/packages/piedweb/url-harvester)
 
 Harvest statistics and meta data from an URL or his source code (seo oriented).
@@ -19,7 +20,7 @@ Implemented in [Seo Pocket Crawler](https://piedweb.com/seo/crawler) ([source on
 
 Via [Packagist](https://img.shields.io/packagist/dt/piedweb/url-harvester.svg?style=flat)
 
-``` bash
+```bash
 $ composer require piedweb/url-harvester
 ```
 
@@ -68,7 +69,7 @@ Harvest::fromUrl($url)
 
 ## Testing
 
-``` bash
+```bash
 $ composer test
 ```
 
@@ -78,16 +79,9 @@ Please see [contributing](https://dev.piedweb.com/contributing)
 
 ## Credits
 
-- [PiedWeb](https://piedweb.com)
+- [Pied Web](https://piedweb.com)
 - [All Contributors](https://github.com/PiedWeb/:package_skake/graphs/contributors)
 
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE) for more information.
-
-[![Latest Version](https://img.shields.io/github/tag/PiedWeb/UrlHarvester.svg?style=flat&label=release)](https://github.com/PiedWeb/UrlHarvester/tags)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/PiedWeb/UrlHarvester/blob/master/LICENSE)
-[![Build Status](https://img.shields.io/travis/PiedWeb/UrlHarvester/master.svg?style=flat)](https://travis-ci.org/PiedWeb/UrlHarvester)
-[![Quality Score](https://img.shields.io/scrutinizer/g/PiedWeb/UrlHarvester.svg?style=flat)](https://scrutinizer-ci.com/g/PiedWeb/UrlHarvester)
-[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/PiedWeb/UrlHarvester.svg?style=flat)](https://scrutinizer-ci.com/g/PiedWeb/UrlHarvester/code-structure)
-[![Total Downloads](https://img.shields.io/packagist/dt/piedweb/url-harvester.svg?style=flat)](https://packagist.org/packages/piedweb/url-harvester)
