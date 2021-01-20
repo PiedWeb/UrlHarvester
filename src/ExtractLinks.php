@@ -4,9 +4,9 @@ namespace PiedWeb\UrlHarvester;
 
 class ExtractLinks
 {
-    const SELECT_A = 'a[href]';
+    public const SELECT_A = 'a[href]';
 
-    const SELECT_ALL = '[href],[src]';
+    public const SELECT_ALL = '[href],[src]';
 
     /** @var Harvest */
     private $harvest;

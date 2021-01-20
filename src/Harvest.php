@@ -13,7 +13,7 @@ class Harvest
     use HarvestLinksTrait;
     use RobotsTxtTrait;
 
-    const DEFAULT_USER_AGENT = 'SeoPocketCrawler - Open Source Bot for SEO Metrics';
+    public const DEFAULT_USER_AGENT = 'SeoPocketCrawler - Open Source Bot for SEO Metrics';
 
     /**
      * @var Response

@@ -15,9 +15,9 @@ class ExtractBreadcrumb
     protected $breadcrumb = [];
     protected $parentDoc;
 
-    const BC_RGX = '#<(div|p|nav|ul)[^>]*(id|class)="?(breadcrumbs?|fil_?d?arian?ne)"?[^>]*>(.*)<\/(\1)>#siU';
+    public const BC_RGX = '#<(div|p|nav|ul)[^>]*(id|class)="?(breadcrumbs?|fil_?d?arian?ne)"?[^>]*>(.*)<\/(\1)>#siU';
 
-    const BC_DIVIDER = [
+    public const BC_DIVIDER = [
         'class="?navigation-pipe"?',
         '&gt;',
         'class="?divider"?',
