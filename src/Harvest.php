@@ -166,11 +166,30 @@ class Harvest
     /*
      * @return bool true si canonical = url requested or no canonical balise
      */
-    public function isCanonicalCorrect(): bool
+    public function isCanonicalCorrect(?string $urlRequested = null): bool
     {
         $canonical = $this->getCanonical();
 
-        return null === $canonical ? true : $this->urlRequested()->get() == $canonical;
+        if (null === $canonical)
+            return true;
+
+        $urlRequested = $urlRequested ?? $this->urlRequested()->get();
+
+        if ($urlRequested == $canonical)
+            return true;
+
+         return $this->checkCanonicalException($urlRequested, $canonical);
+    }
+
+    private function checkCanonicalException(string $urlRequested, string $canonical): bool
+    {
+        if (preg_match('/^.+?[^\/:](?=[?\/]|$)/', $urlRequested, $match) !== false
+            && $match[0] === ltrim($urlRequested, '/')
+            && ($match[0] == $canonical || $match[0].'/' == $canonical)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function getTextAnalysis()

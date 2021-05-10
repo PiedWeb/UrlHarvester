@@ -221,4 +221,17 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertTrue(count($this->getHarvest()->getTextAnalysis()->getExpressionsByDensity()) > 1);
     }
+
+    public function testCanonical()
+    {
+        $harvest = Harvest::fromUrl(
+            'https://piedweb.com',
+            'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0'
+        );
+
+        $this->assertTrue($harvest->isCanonicalCorrect('https://piedweb.com'));
+        $this->assertTrue($harvest->isCanonicalCorrect('https://piedweb.com/'));
+        $this->assertFalse($harvest->isCanonicalCorrect('https://piedweb.com//'));
+
+    }
 }
