@@ -6,6 +6,7 @@ use PiedWeb\Curl\Request as CurlRequest;
 use PiedWeb\Curl\Response;
 use PiedWeb\TextAnalyzer\Analyzer as TextAnalyzer;
 use Spatie\Robots\RobotsHeaders;
+use \PiedWeb\TextAnalyzer\Analysis;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 class Harvest
@@ -15,30 +16,19 @@ class Harvest
 
     public const DEFAULT_USER_AGENT = 'SeoPocketCrawler - Open Source Bot for SEO Metrics';
 
-    /**
-     * @var Response
-     */
-    protected $response;
+    protected Response $response;
 
-    /**
-     * @var \Symfony\Component\DomCrawler\Crawler
-     */
-    protected $dom;
+    protected ?DomCrawler $dom;
 
-    /** @var string */
-    protected $baseUrl;
+    protected ?string $baseUrl;
 
-    /** @var bool */
-    protected $follow;
+    protected ?bool $follow;
 
-    /** @var \PiedWeb\TextAnalyzer\Analysis */
-    private $textAnalysis;
+    private ?Analysis $textAnalysis;
 
-    /** @var Url */
-    protected $urlRequested;
+    protected Url $urlRequested;
 
-    /** @var Url */
-    protected $url;
+    protected Url $url;
 
     /**
      * @return self|int
@@ -289,7 +279,7 @@ class Harvest
             }
         }
 
-        return $this->baseUrl;
+        return (string) $this->baseUrl;
     }
 
     /**

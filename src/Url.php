@@ -74,12 +74,12 @@ class Url
         return substr($this->http->withFragment(''), \strlen($this->getOrigin()));
     }
 
-    public function get()
+    public function get(): string
     {
         return $this->__toString();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->http;
     }
