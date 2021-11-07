@@ -15,7 +15,9 @@ use League\Uri\UriResolver;
 class Url
 {
     protected $http;
+
     protected $origin;
+
     protected $registrableDomain;
 
     public function __construct(string $url)
@@ -69,7 +71,7 @@ class Url
 
     public function getRelativizedDocumentUrl(): string
     {
-        return substr($this->http->withFragment(''), strlen($this->getOrigin()));
+        return substr($this->http->withFragment(''), \strlen($this->getOrigin()));
     }
 
     public function get()
@@ -84,6 +86,6 @@ class Url
 
     public function relativize()
     {
-        return substr($this->get(), strlen($this->getOrigin()));
+        return substr($this->get(), \strlen($this->getOrigin()));
     }
 }

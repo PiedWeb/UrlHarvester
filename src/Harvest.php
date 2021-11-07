@@ -94,7 +94,7 @@ class Harvest
 
     public function getDom()
     {
-        $this->dom = $this->dom !== null ? $this->dom : new DomCrawler($this->response->getContent());
+        $this->dom = null !== $this->dom ? $this->dom : new DomCrawler($this->response->getContent());
 
         return $this->dom;
     }
@@ -170,20 +170,22 @@ class Harvest
     {
         $canonical = $this->getCanonical();
 
-        if (null === $canonical)
+        if (null === $canonical) {
             return true;
+        }
 
         $urlRequested = $urlRequested ?? $this->urlRequested()->get();
 
-        if ($urlRequested == $canonical)
+        if ($urlRequested == $canonical) {
             return true;
+        }
 
-         return $this->checkCanonicalException($urlRequested, $canonical);
+        return $this->checkCanonicalException($urlRequested, $canonical);
     }
 
     private function checkCanonicalException(string $urlRequested, string $canonical): bool
     {
-        if (preg_match('/^.+?[^\/:](?=[?\/]|$)/', $urlRequested, $match) !== false
+        if (false !== preg_match('/^.+?[^\/:](?=[?\/]|$)/', $urlRequested, $match)
             && $match[0] === ltrim($urlRequested, '/')
             && ($match[0] == $canonical || $match[0].'/' == $canonical)) {
             return true;
@@ -218,8 +220,8 @@ class Harvest
 
     public function getRatioTxtCode(): int
     {
-        $textLenght = strlen($this->getDom()->text(''));
-        $htmlLenght = strlen(Helper::clean($this->response->getContent()));
+        $textLenght = \strlen($this->getDom()->text(''));
+        $htmlLenght = \strlen(Helper::clean($this->response->getContent()));
 
         return (int) ($htmlLenght > 0 ? round($textLenght / $htmlLenght * 100) : 0);
     }
@@ -231,7 +233,7 @@ class Harvest
     {
         $breadcrumb = ExtractBreadcrumb::get($this);
 
-        if (null !== $separator && is_array($breadcrumb)) {
+        if (null !== $separator && \is_array($breadcrumb)) {
             $breadcrumb = array_map(function ($item) {
                 return $item->getCleanName();
             }, $breadcrumb);
@@ -247,7 +249,7 @@ class Harvest
     public function getRedirection(): ?string
     {
         $headers = $this->response->getHeaders();
-        $headers = array_change_key_case($headers ? $headers : []);
+        $headers = array_change_key_case($headers ?: []);
         if (isset($headers['location']) && ExtractLinks::isWebLink($headers['location'])) {
             return $this->url()->resolve($headers['location']);
         }
@@ -280,7 +282,7 @@ class Harvest
     {
         if (! $this->baseUrl) {
             $base = $this->findOne('base');
-            if ($base->getBaseHref() && filter_var($base->getBaseHref(), FILTER_VALIDATE_URL)) {
+            if ($base->getBaseHref() && filter_var($base->getBaseHref(), \FILTER_VALIDATE_URL)) {
                 $this->baseUrl = $base->getBaseHref();
             } else {
                 $this->baseUrl = $this->url()->get();

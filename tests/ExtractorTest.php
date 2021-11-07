@@ -37,14 +37,14 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
         $links = ExtractLinks::get($this->getHarvest());
 
         foreach ($links as $link) {
-            $this->assertTrue(strlen($link->getUrl()->get()) > 10);
-            $this->assertTrue(strlen($link->getAnchor()) > 1);
-            $this->assertTrue(strlen($link->getElement()->getAttribute('href')) >= 1);
+            $this->assertTrue(\strlen($link->getUrl()->get()) > 10);
+            $this->assertTrue(\strlen($link->getAnchor()) > 1);
+            $this->assertTrue('' !== $link->getElement()->getAttribute('href'));
         }
 
         $links = ExtractLinks::get($this->getHarvest(), ExtractLinks::SELECT_ALL);
         foreach ($links as $link) {
-            $this->assertTrue(strlen($link->getUrl()->get()) > 10);
+            $this->assertTrue(\strlen($link->getUrl()->get()) > 10);
         }
     }
 
@@ -53,9 +53,9 @@ class ExtractorTest extends \PHPUnit\Framework\TestCase
         $bcItems = ExtractBreadcrumb::get($this->getHarvest());
 
         foreach ($bcItems as $item) {
-            $this->assertTrue(strlen($item->getUrl()) > 10);
-            $this->assertTrue(strlen($item->getName()) > 1);
-            $this->assertTrue(strlen($item->getCleanName()) > 1);
+            $this->assertTrue(\strlen($item->getUrl()) > 10);
+            $this->assertTrue(\strlen($item->getName()) > 1);
+            $this->assertTrue(\strlen($item->getCleanName()) > 1);
         }
     }
 

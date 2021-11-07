@@ -32,7 +32,7 @@ class Domain
         }
 
         $reflector = new \ReflectionClass("Pdp\Rules");
-        $base = dirname(dirname($reflector->getFileName()));
+        $base = \dirname($reflector->getFileName(), 2);
 
         return self::$rules = Rules::fromPath($base.'/test_data/public_suffix_list.dat');
 

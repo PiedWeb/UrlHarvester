@@ -13,6 +13,7 @@ namespace PiedWeb\UrlHarvester;
 class ExtractBreadcrumb
 {
     protected $breadcrumb = [];
+
     protected $parentDoc;
 
     public const BC_RGX = '#<(div|p|nav|ul)[^>]*(id|class)="?(breadcrumbs?|fil_?d?arian?ne)"?[^>]*>(.*)<\/(\1)>#siU';
@@ -74,7 +75,7 @@ class ExtractBreadcrumb
     {
         $exploded = preg_split('/'.str_replace('/', '\/', $divider).'/si', $breadcrumb);
 
-        return false !== $exploded && count($exploded) > 1 ? $exploded : false;
+        return false !== $exploded && \count($exploded) > 1 ? $exploded : false;
     }
 
     /**

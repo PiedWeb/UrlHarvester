@@ -33,7 +33,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
     private function getHarvestFromCache()
     {
         $response = new ResponseFromCache(
-            'HTTP/1.1 200 OK'.PHP_EOL.PHP_EOL.file_get_contents(__DIR__.'/page.html'),
+            'HTTP/1.1 200 OK'.\PHP_EOL.\PHP_EOL.file_get_contents(__DIR__.'/page.html'),
             $this->getUrl(),
             ['content_type' => 'text/html; charset=UTF-8']
         );
@@ -55,11 +55,11 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $harvest = $this->getHarvestFromCache();
         $url = $this->getUrl();
 
-        $this->assertSame(2, count($harvest->getLinks(Link::LINK_SELF)));
-        $this->assertTrue(count($harvest->getLinks(Link::LINK_INTERNAL)) == 4);
-        $this->assertTrue(count($harvest->getLinks(Link::LINK_EXTERNAL)) == 3);
-        $this->assertTrue(count($harvest->getLinks(Link::LINK_SUB)) == 2);
-        $this->assertSame(11, count($harvest->getLinks()));
+        $this->assertSame(2, \count($harvest->getLinks(Link::LINK_SELF)));
+        $this->assertTrue(4 == \count($harvest->getLinks(Link::LINK_INTERNAL)));
+        $this->assertTrue(3 == \count($harvest->getLinks(Link::LINK_EXTERNAL)));
+        $this->assertTrue(2 == \count($harvest->getLinks(Link::LINK_SUB)));
+        $this->assertSame(11, \count($harvest->getLinks()));
     }
 
     public function testHarvest()
@@ -69,18 +69,18 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
         // Just check Curl  is doing is job
         $this->assertTrue($harvest->getResponse()->getInfo('total_time') > 0.00000001);
-        $this->assertTrue(strlen($harvest->getTag('h1')) > 2);
-        $this->assertTrue(strlen($harvest->getMeta('description')) > 2);
+        $this->assertTrue(\strlen($harvest->getTag('h1')) > 2);
+        $this->assertTrue(\strlen($harvest->getMeta('description')) > 2);
         $this->assertTrue('https://piedweb.com/seo/crawler' == $harvest->getCanonical());
         $this->assertTrue($harvest->isCanonicalCorrect());
         $this->assertTrue($harvest->getRatioTxtCode() > 2);
-        $this->assertTrue(is_array($harvest->getKws()));
+        $this->assertTrue(\is_array($harvest->getKws()));
 
-        $this->assertTrue(strlen($harvest->getUniqueTag('head title')) > 10);
+        $this->assertTrue(\strlen($harvest->getUniqueTag('head title')) > 10);
 
         $this->assertTrue(null === $harvest->getUniqueTag('h12'));
 
-        $this->assertTrue(is_array($harvest->getBreadCrumb()));
+        $this->assertTrue(\is_array($harvest->getBreadCrumb()));
 
         $this->assertSame('piedweb.com', $harvest->url()->getRegistrableDomain());
         $this->assertSame('https://piedweb.com/seo/crawler', $harvest->getBaseUrl());
@@ -91,14 +91,13 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $harvest = $this->getHarvest();
         $url = $this->getUrl();
 
-
-        $this->assertTrue(is_array($harvest->getLinkedRessources()));
-        $this->assertTrue(is_array($harvest->getLinks()));
-        $this->assertTrue(is_array($harvest->getLinks(Link::LINK_SELF)));
-        $this->assertTrue(is_array($harvest->getLinks(Link::LINK_INTERNAL)));
-        $this->assertTrue(is_array($harvest->getLinks(Link::LINK_SUB)));
-        $this->assertTrue(is_array($harvest->getLinks(Link::LINK_EXTERNAL)));
-        $this->assertTrue(is_int($harvest->getNbrDuplicateLinks()));
+        $this->assertTrue(\is_array($harvest->getLinkedRessources()));
+        $this->assertTrue(\is_array($harvest->getLinks()));
+        $this->assertTrue(\is_array($harvest->getLinks(Link::LINK_SELF)));
+        $this->assertTrue(\is_array($harvest->getLinks(Link::LINK_INTERNAL)));
+        $this->assertTrue(\is_array($harvest->getLinks(Link::LINK_SUB)));
+        $this->assertTrue(\is_array($harvest->getLinks(Link::LINK_EXTERNAL)));
+        $this->assertTrue(\is_int($harvest->getNbrDuplicateLinks()));
     }
 
     public function testFollow()
@@ -138,7 +137,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $harvest->setRobotsTxt($harvest->getRobotsTxt());
 
         $harvest2 = new Harvest(new ResponseFromCache(
-            'HTTP/1.1 200 OK'.PHP_EOL.'X-robots-tag: noindex'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html>'
+            'HTTP/1.1 200 OK'.\PHP_EOL.'X-robots-tag: noindex'.\PHP_EOL.\PHP_EOL.'<!DOCTYPE html><html>'
             .'<head></head><body><p>Tests</p></body>',
             'https://piedweb.com/noindex-headers',
             ['content_type' => 'text/html; charset=UTF-8']
@@ -147,7 +146,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(Indexable::NOT_INDEXABLE_HEADER, $harvest2->indexable());
 
         $harvest2 = new Harvest(new ResponseFromCache(
-            'HTTP/1.1 200 OK'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html>'
+            'HTTP/1.1 200 OK'.\PHP_EOL.\PHP_EOL.'<!DOCTYPE html><html>'
             .'<head><meta name="robots" content="noindex"></head><body><p>Tests</p></body>',
             'https://piedweb.com/',
             ['content_type' => 'text/html; charset=UTF-8']
@@ -156,7 +155,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(Indexable::NOT_INDEXABLE_META, $harvest2->indexable());
 
         $harvest2 = new Harvest(new ResponseFromCache(
-            'HTTP/1.1 200 OK'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html>'
+            'HTTP/1.1 200 OK'.\PHP_EOL.\PHP_EOL.'<!DOCTYPE html><html>'
             .'<head><link rel="canonical" href="https://piedweb.com/seo" /></head><body><p>Tests</p></body>',
             'https://piedweb.com/',
             ['content_type' => 'text/html; charset=UTF-8']
@@ -165,7 +164,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(Indexable::NOT_INDEXABLE_CANONICAL, $harvest2->indexable());
 
         $harvest2 = new Harvest(new ResponseFromCache(
-            'HTTP/1.1 404 OK'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html>'
+            'HTTP/1.1 404 OK'.\PHP_EOL.\PHP_EOL.'<!DOCTYPE html><html>'
             .'<head></head><body><p>Tests</p></body>',
             'https://piedweb.com/',
             ['content_type' => 'text/html; charset=UTF-8']
@@ -174,7 +173,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(Indexable::NOT_INDEXABLE_4XX, $harvest2->indexable());
 
         $harvest2 = new Harvest(new ResponseFromCache(
-            'HTTP/1.1 510 OK'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html>'
+            'HTTP/1.1 510 OK'.\PHP_EOL.\PHP_EOL.'<!DOCTYPE html><html>'
             .'<head></head><body><p>Tests</p></body>',
             'https://piedweb.com/',
             ['content_type' => 'text/html; charset=UTF-8']
@@ -183,7 +182,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(Indexable::NOT_INDEXABLE_5XX, $harvest2->indexable());
 
         $harvest2 = new Harvest(new ResponseFromCache(
-            'HTTP/1.1 301 Moved Permanently'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html>'
+            'HTTP/1.1 301 Moved Permanently'.\PHP_EOL.\PHP_EOL.'<!DOCTYPE html><html>'
             .'<head></head><body><p>Tests</p></body>',
             'https://piedweb.com/',
             ['content_type' => 'text/html; charset=UTF-8']
@@ -203,13 +202,13 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
             $harvest->getResponse()->getRequest()
         );
 
-        $this->assertTrue(strlen($harvest->getUniqueTag('head title')) > 10);
+        $this->assertTrue(\strlen($harvest->getUniqueTag('head title')) > 10);
     }
 
     public function testHarvestFromCache()
     {
         $harvest = new Harvest(new ResponseFromCache(
-            'HTTP/1.1 200 OK'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html><body><p>Tests</p></body>',
+            'HTTP/1.1 200 OK'.\PHP_EOL.\PHP_EOL.'<!DOCTYPE html><html><body><p>Tests</p></body>',
             'https://piedweb.com/',
             ['content_type' => 'text/html; charset=UTF-8']
         ));
@@ -219,7 +218,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
 
     public function testTextAnalysis()
     {
-        $this->assertTrue(count($this->getHarvest()->getTextAnalysis()->getExpressionsByDensity()) > 1);
+        $this->assertTrue(\count($this->getHarvest()->getTextAnalysis()->getExpressionsByDensity()) > 1);
     }
 
     public function testCanonical()
@@ -232,6 +231,5 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($harvest->isCanonicalCorrect('https://piedweb.com'));
         $this->assertTrue($harvest->isCanonicalCorrect('https://piedweb.com/'));
         $this->assertFalse($harvest->isCanonicalCorrect('https://piedweb.com//'));
-
     }
 }

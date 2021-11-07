@@ -16,7 +16,7 @@ class Request
 
     private string $language;
 
-    private string $proxy;
+    private ?string $proxy;
 
     public int $maxSize = 1000000;
 
@@ -43,7 +43,7 @@ class Request
         ?string $proxy = null,
         int $documentMaxSize = 1000000
     ) {
-        $request = new Request($url);
+        $request = new self($url);
 
         $request->userAgent = $userAgent;
         $request->language = $language;
@@ -98,20 +98,20 @@ class Request
             ->setEncodingGzip()
             ->setUserAgent($this->userAgent)
             ->setDefaultSpeedOptions()
-            ->setOpt(CURLOPT_SSL_VERIFYHOST, 0)
-            ->setOpt(CURLOPT_SSL_VERIFYPEER, 0)
-            ->setOpt(CURLOPT_MAXREDIRS, 0)
-            ->setOpt(CURLOPT_FOLLOWLOCATION, false)
-            ->setOpt(CURLOPT_COOKIE, false)
-            ->setOpt(CURLOPT_CONNECTTIMEOUT, 20)
-            ->setOpt(CURLOPT_TIMEOUT, 80)
+            ->setOpt(\CURLOPT_SSL_VERIFYHOST, 0)
+            ->setOpt(\CURLOPT_SSL_VERIFYPEER, 0)
+            ->setOpt(\CURLOPT_MAXREDIRS, 0)
+            ->setOpt(\CURLOPT_FOLLOWLOCATION, false)
+            ->setOpt(\CURLOPT_COOKIE, false)
+            ->setOpt(\CURLOPT_CONNECTTIMEOUT, 20)
+            ->setOpt(\CURLOPT_TIMEOUT, 80)
             ->setAbortIfTooBig($this->maxSize); // 2Mo
 
         if ($this->proxy) {
             $request->setProxy($this->proxy);
         }
 
-        $request->setOpt(CURLOPT_HTTPHEADER, $this->prepareHeadersForRequest());
+        $request->setOpt(\CURLOPT_HTTPHEADER, $this->prepareHeadersForRequest());
 
         $response = $request->exec();
         //dd($this->request->exec());

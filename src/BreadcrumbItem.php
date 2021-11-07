@@ -5,6 +5,7 @@ namespace PiedWeb\UrlHarvester;
 class BreadcrumbItem
 {
     private $url;
+
     private $name;
 
     public function __construct($url, $name)

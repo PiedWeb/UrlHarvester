@@ -8,15 +8,25 @@ class Indexable
 {
     // https://stackoverflow.com/questions/1880148/how-to-get-name-of-the-constant
     public const INDEXABLE = 0;
+
     public const NOT_INDEXABLE_ROBOTS = 1;
+
     public const NOT_INDEXABLE_HEADER = 2;
+
     public const NOT_INDEXABLE_META = 3;
+
     public const NOT_INDEXABLE_CANONICAL = 4;
+
     public const NOT_INDEXABLE_4XX = 5;
+
     public const NOT_INDEXABLE_5XX = 6;
+
     public const NOT_INDEXABLE_NETWORK_ERROR = 7;
+
     public const NOT_INDEXABLE_TOO_BIG = 10;
+
     public const NOT_INDEXABLE_3XX = 8;
+
     public const NOT_INDEXABLE_NOT_HTML = 9;
 
     /** @var Harvest */
@@ -49,7 +59,7 @@ class Indexable
 
     public function headersAllow()
     {
-        $headers = explode(PHP_EOL, $this->harvest->getResponse()->getHeaders(false));
+        $headers = explode(\PHP_EOL, $this->harvest->getResponse()->getHeaders(false));
 
         return RobotsHeaders::create($headers)->mayIndex($this->isIndexableFor);
     }

@@ -56,7 +56,7 @@ trait RobotsTxtTrait
      */
     public function setRobotsTxt($robotsTxt)
     {
-        $this->robotsTxt = is_string($robotsTxt) ? (empty($robotsTxt) ? '' : new RobotsTxt($robotsTxt)) : $robotsTxt;
+        $this->robotsTxt = \is_string($robotsTxt) ? (empty($robotsTxt) ? '' : new RobotsTxt($robotsTxt)) : $robotsTxt;
 
         return $this;
     }

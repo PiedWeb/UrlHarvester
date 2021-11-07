@@ -33,14 +33,20 @@ class Link
 
     // wrapper related
     public const LINK_A = 1;
+
     public const LINK_SRC = 4;
+
     public const LINK_3XX = 2;
+
     public const LINK_301 = 3;
 
     // type related
     public const LINK_SELF = 1;
+
     public const LINK_INTERNAL = 2;
+
     public const LINK_SUB = 3;
+
     public const LINK_EXTERNAL = 4;
 
     /**

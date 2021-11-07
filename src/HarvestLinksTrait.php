@@ -8,6 +8,7 @@ trait HarvestLinksTrait
      * @var array
      */
     protected $links;
+
     protected $linksPerType;
 
     abstract public function getDom();
@@ -50,7 +51,7 @@ trait HarvestLinksTrait
             $u[(string) $link->getUrl()] = 1;
         }
 
-        return count($links) - count($u);
+        return \count($links) - \count($u);
     }
 
     public function classifyLinks()
