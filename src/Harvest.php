@@ -18,13 +18,13 @@ class Harvest
 
     protected Response $response;
 
-    protected ?DomCrawler $dom;
+    protected DomCrawler $dom;
 
-    protected ?string $baseUrl;
+    protected string $baseUrl;
 
-    protected ?bool $follow;
+    protected bool $follow;
 
-    private ?Analysis $textAnalysis;
+    private Analysis $textAnalysis;
 
     protected Url $urlRequested;
 
@@ -82,9 +82,11 @@ class Harvest
         return $this->response;
     }
 
+
+    /** @psalm-suppress RedundantPropertyInitializationCheck */
     public function getDom()
     {
-        $this->dom = null !== $this->dom ? $this->dom : new DomCrawler($this->response->getContent());
+        $this->dom = isset($this->dom) ? $this->dom : new DomCrawler($this->response->getContent());
 
         return $this->dom;
     }
@@ -184,9 +186,11 @@ class Harvest
         return false;
     }
 
+
+    /** @psalm-suppress RedundantPropertyInitializationCheck */
     public function getTextAnalysis()
     {
-        if (null !== $this->textAnalysis) {
+        if (isset($this->textAnalysis)) {
             return $this->textAnalysis;
         }
 
@@ -267,10 +271,11 @@ class Harvest
 
     /**
      * Return the value in base tag if exist, else, current Url.
-     */
+      * @psalm-suppress RedundantPropertyInitializationCheck
+    */
     public function getBaseUrl(): string
     {
-        if (! $this->baseUrl) {
+        if (! isset($this->baseUrl)) {
             $base = $this->findOne('base');
             if ($base->getBaseHref() && filter_var($base->getBaseHref(), \FILTER_VALIDATE_URL)) {
                 $this->baseUrl = $base->getBaseHref();
@@ -300,9 +305,10 @@ class Harvest
         return ! (strpos($this->getMeta('googlebot'), 'nofollow') || strpos($this->getMeta('robots'), 'nofollow'));
     }
 
+    /** @psalm-suppress RedundantPropertyInitializationCheck */
     public function mayFollow()
     {
-        if (null === $this->follow) {
+        if (!isset($this->follow)) {
             $robotsHeaders = new RobotsHeaders((array) $this->response->getHeaders());
             $this->follow = $robotsHeaders->mayFollow() && $this->metaAuthorizeToFollow() ? true : false;
         }
