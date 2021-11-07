@@ -24,7 +24,7 @@
     "php": "^7.3|^8.0",
     "neitanod/forceutf8": "^2.0.4",
     "piedweb/text-analyzer": "^0.0",
-    "spatie/robots-txt": "^1|^2",
+    "spatie/robots-txt": "^1.0.10|^2",
     "piedweb/curl": "^0.0.18",
     "symfony/dom-crawler": "^5.2",
     "symfony/css-selector": "^5.2",
