@@ -125,7 +125,7 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $indexable = new Indexable($this->getHarvest());
         $this->assertTrue($indexable->metaAllows());
         $this->assertTrue($indexable->headersAllow());
-        $this->assertTrue(Indexable::INDEXABLE == $this->getHarvest()->indexable());
+        $this->assertSame(Indexable::INDEXABLE, $this->getHarvest()->indexable());
 
         $url = 'https://dev.piedweb.com/disallow';
         $harvest = Harvest::fromUrl(
@@ -133,8 +133,8 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
             'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0'
         );
 
+        $harvest->setRobotsTxt('User-agent: *'."\n".'Disallow: /disallow');
         $this->assertSame(Indexable::NOT_INDEXABLE_ROBOTS, $harvest->indexable());
-        $harvest->setRobotsTxt($harvest->getRobotsTxt());
 
         $harvest2 = new Harvest(new ResponseFromCache(
             'HTTP/1.1 200 OK'.\PHP_EOL.'X-robots-tag: noindex'.\PHP_EOL.\PHP_EOL.'<!DOCTYPE html><html>'
