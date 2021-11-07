@@ -10,35 +10,15 @@ use PiedWeb\Curl\Response;
  */
 class Request
 {
-    /**
-     * @var string
-     */
-    private $url;
+    private string $url;
 
-    /**
-     * @var string
-     */
-    private $userAgent;
+    private string $userAgent;
 
-    /**
-     * @var string
-     */
-    private $language;
+    private string $language;
 
-    /**
-     * @var string
-     */
-    private $proxy;
+    private string $proxy;
 
-    /**
-     * @var CurlRequest
-     */
-    private $request;
-
-    /**
-     * @var Response|int
-     */
-    private $response;
+    public int $maxSize = 1000000;
 
     /**
      * @param bool $tryHttps
@@ -49,9 +29,10 @@ class Request
         string $url,
         string $userAgent,
         string $language = 'en,en-US;q=0.5',
-        ?string $proxy = null
+        ?string $proxy = null,
+        int $documentMaxSize = 1000000
     ) {
-        return self::makeFromRequest(null, $url, $userAgent, $language, $proxy);
+        return self::makeFromRequest(null, $url, $userAgent, $language, $proxy, $documentMaxSize);
     }
 
     public static function makeFromRequest(
@@ -59,13 +40,15 @@ class Request
         string $url,
         string $userAgent,
         string $language = 'en,en-US;q=0.5',
-        ?string $proxy = null
+        ?string $proxy = null,
+        int $documentMaxSize = 1000000
     ) {
         $request = new Request($url);
 
         $request->userAgent = $userAgent;
         $request->language = $language;
         $request->proxy = $proxy;
+        $request->maxSize = $documentMaxSize;
 
         return $request->request($curlRequest);
     }
@@ -81,10 +64,8 @@ class Request
 
     /**
      * Prepare headers as a normal browser (same order, same content).
-     *
-     * @return array
      */
-    private function prepareHeadersForRequest()
+    private function prepareHeadersForRequest(): array
     {
         //$host = parse_url($this->url, PHP_URL_HOST);
 
@@ -110,8 +91,8 @@ class Request
      */
     private function request(?CurlRequest $request = null)
     {
-        $this->request = null !== $request ? $request : new CurlRequest();
-        $this->request
+        $request = null !== $request ? $request : new CurlRequest();
+        $request
             ->setUrl($this->url)
             ->setReturnHeader()
             ->setEncodingGzip()
@@ -124,16 +105,17 @@ class Request
             ->setOpt(CURLOPT_COOKIE, false)
             ->setOpt(CURLOPT_CONNECTTIMEOUT, 20)
             ->setOpt(CURLOPT_TIMEOUT, 80)
-            ->setAbortIfTooBig(200000); // 2Mo
+            ->setAbortIfTooBig($this->maxSize); // 2Mo
 
         if ($this->proxy) {
-            $this->request->setProxy($this->proxy);
+            $request->setProxy($this->proxy);
         }
 
-        $this->request->setOpt(CURLOPT_HTTPHEADER, $this->prepareHeadersForRequest());
+        $request->setOpt(CURLOPT_HTTPHEADER, $this->prepareHeadersForRequest());
 
-        $this->response = $this->request->exec();
+        $response = $request->exec();
+        //dd($this->request->exec());
 
-        return $this->response;
+        return $response;
     }
 }

@@ -55,11 +55,11 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $harvest = $this->getHarvestFromCache();
         $url = $this->getUrl();
 
-        $this->assertTrue(count($harvest->getLinks(Link::LINK_SELF)) == 1);
+        $this->assertSame(2, count($harvest->getLinks(Link::LINK_SELF)));
         $this->assertTrue(count($harvest->getLinks(Link::LINK_INTERNAL)) == 4);
         $this->assertTrue(count($harvest->getLinks(Link::LINK_EXTERNAL)) == 3);
         $this->assertTrue(count($harvest->getLinks(Link::LINK_SUB)) == 2);
-        $this->assertTrue(count($harvest->getLinks()) == 10);
+        $this->assertSame(11, count($harvest->getLinks()));
     }
 
     public function testHarvest()
