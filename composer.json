@@ -37,6 +37,9 @@
     "symfony/var-dumper": "^5.3",
     "friendsofphp/php-cs-fixer": "^3.2"
   },
+  "scripts": {
+    "format": "vendor/bin/php-cs-fixer fix"
+  },
   "autoload": {
     "psr-4": {
       "PiedWeb\\UrlHarvester\\": "src"
