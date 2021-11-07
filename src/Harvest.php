@@ -4,9 +4,9 @@ namespace PiedWeb\UrlHarvester;
 
 use PiedWeb\Curl\Request as CurlRequest;
 use PiedWeb\Curl\Response;
+use PiedWeb\TextAnalyzer\Analysis;
 use PiedWeb\TextAnalyzer\Analyzer as TextAnalyzer;
 use Spatie\Robots\RobotsHeaders;
-use \PiedWeb\TextAnalyzer\Analysis;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
 class Harvest
@@ -81,7 +81,6 @@ class Harvest
     {
         return $this->response;
     }
-
 
     /** @psalm-suppress RedundantPropertyInitializationCheck */
     public function getDom()
@@ -186,7 +185,6 @@ class Harvest
         return false;
     }
 
-
     /** @psalm-suppress RedundantPropertyInitializationCheck */
     public function getTextAnalysis()
     {
@@ -271,8 +269,9 @@ class Harvest
 
     /**
      * Return the value in base tag if exist, else, current Url.
-      * @psalm-suppress RedundantPropertyInitializationCheck
-    */
+     *
+     * @psalm-suppress RedundantPropertyInitializationCheck
+     */
     public function getBaseUrl(): string
     {
         if (! isset($this->baseUrl)) {
@@ -308,7 +307,7 @@ class Harvest
     /** @psalm-suppress RedundantPropertyInitializationCheck */
     public function mayFollow()
     {
-        if (!isset($this->follow)) {
+        if (! isset($this->follow)) {
             $robotsHeaders = new RobotsHeaders((array) $this->response->getHeaders());
             $this->follow = $robotsHeaders->mayFollow() && $this->metaAuthorizeToFollow() ? true : false;
         }
