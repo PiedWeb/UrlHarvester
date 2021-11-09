@@ -232,4 +232,15 @@ class HarvestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($harvest->isCanonicalCorrect('https://piedweb.com/'));
         $this->assertFalse($harvest->isCanonicalCorrect('https://piedweb.com//'));
     }
+
+    public function testHarvestTripAdvisor()
+    {
+        $url = 'https://www.tripadvisor.fr/Attraction_Review-g196719-d21232770-Reviews-Accompagnateur_Pied_Vert_Rando_Vercors-Villard_de_Lans_Isere_Auvergne_Rhone_Alpe.html';
+        $harvest = Harvest::fromUrl(
+            $url,
+            'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0'
+        );
+
+        $this->assertTrue(!is_int($harvest->getResponse()));
+    }
 }
